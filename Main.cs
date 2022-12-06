@@ -23,11 +23,19 @@ namespace Airstrike
         int delayTime = 0;
         int newTime;
         int timePass;
+        int timeOut =10000;
+        int timer=0;
+        
         public Main()
         {
+            bool debug = true;
             Tick += onTick;
-            KeyUp += onKeyUp;
             List<Vehicle> trash = new List<Vehicle>(World.GetAllVehicles("lazer"));
+            List<Ped> musor = new List<Ped>(World.GetAllPeds(PedHash.Blackops03SMY));
+            foreach(Ped p in musor)
+            {
+                p.Delete();
+            }
             foreach (Vehicle lazer in trash)
             {
                 if(lazer.Driver != null)
@@ -36,46 +44,34 @@ namespace Airstrike
                 }
                 lazer.Delete();
             }
-
-            void onKeyUp(object sender, KeyEventArgs e)
-            {
-                if (e.KeyCode == Keys.NumPad5 && planeActive)
-                {
-                    plane.EngineHealth = 0;
-                    GTA.UI.Screen.ShowHelpText("Going down " + plane.EngineHealth, 1000, false, false);
-                }
-                if (e.KeyCode == Keys.U)
-                {
-                    unCall();
-                }
-            }
-            void callPlane()
+            void callPlane(Vector3 target)
             {
                 Ped player = Game.Player.Character;
                 for(int i = 0; i < 2; i++)
                 {
-                    GTA.UI.Screen.ShowHelpText("Plane called...", 2000, true, false);
-                    plane = World.CreateVehicle("lazer", player.Position.Around(15f) + player.UpVector * 300 + player.ForwardVector * -2000, player.Heading);
+                    if (debug) { GTA.UI.Screen.ShowHelpText("Plane called...", 2000, true, false); }
+                    plane = World.CreateVehicle("lazer", target.Around(15f) + player.UpVector * 300 + player.ForwardVector * -2000, player.Heading);
                     pilot = plane.CreatePedOnSeat(VehicleSeat.Driver, PedHash.Blackops03SMY);
                     plane.IsEngineRunning = true;
                     isDone = false;
-                    plane.ForwardSpeed = 1000;
+                    plane.ForwardSpeed = 300;
                     blip = plane.AddBlip();
                     blip.Color = BlipColor.Blue;
                     pilot.RelationshipGroup = player.RelationshipGroup;
                     //Function.Call(Hash.TASK_PLANE_CHASE, pilot, player, 0f, 0f, 150f);
                     Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, Game.Player.Character, 0, 0, 0, 4, 300f, 0f, 0f, 300f, 400f);
                     jets.Add(plane);
-                    Wait(2);
-                    }
+                    Wait(10);
+                }
                
                 planeActive = true;
             }
             void unCall()
             {
-                if (!plane.IsInRange(Game.Player.Character.Position, 1500f) && (isDone))
+                plane.ForwardSpeed = 250;
+                if (!plane.IsInRange(Game.Player.Character.Position, 1500f) && isDone)
                 {
-                    GTA.UI.Screen.ShowHelpText("Plane uncalled...", 2000, true, false);
+                    if (debug) { GTA.UI.Screen.ShowHelpText("Plane uncalled...", 2000, true, false); }
                     planeActive = false;
                     isDone = false;
                     foreach(Vehicle jet in jets)
@@ -91,54 +87,99 @@ namespace Airstrike
             }
             void strike(Vector3 target, Ped pilot, Vehicle plane)
             {
-                Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X, target.Y, target.Z, 4, 300f, 0f, 0f, 250f, 350f);
-                if (plane.Position.DistanceTo(target) < 500)
-                {
-                    i = 1;
-                    while (i <= 50 && !plane.IsDead && !isDone)
+                Ped player = Game.Player.Character;
+                    plane.ForwardSpeed = 250;
+                    Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X, target.Y, target.Z, 4, 300f, 0f, 0f, 250f, 350f);
+                    if (plane.Position.DistanceTo(target) > 2500)
                     {
-                        World.ShootBullet(plane.Position, target.Around(7f), pilot, WeaponHash.GrenadeLauncher, 100, -1);
-                        GTA.UI.Screen.ShowHelpText("~r~ROCKETS FIRED: " + i, 1000, false, false);
-                        Wait(200);
+                    isDone = true;
+                    unCall();
+                    }
+                   else if (plane.Position.DistanceTo(target) < 600)
+                    {
+                        i = 1;
+                    while (i <= 30 && !plane.IsDead && !isDone)
+                    {
+                        plane.ForwardSpeed = 250;
+                        World.ShootBullet(plane.Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), player, WeaponHash.Railgun, 100, -1);
+                        if (debug) { GTA.UI.Screen.ShowHelpText("~r~ROCKETS FIRED: " + i, 1000, false, false); }
+                        Wait(20);
                         i++;
-                        if (i >= 50)
-                        {
-                            delayTime = Game.GameTime;
-                            isDone = true;
-                            unCall();
+                    }
+                    Wait(470);
+                    while (i <= 60 && !plane.IsDead && !isDone)
+                    {
+                        plane.ForwardSpeed = 250;
+                        World.ShootBullet(plane.Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), player, WeaponHash.Railgun, 100, -1);
+                        if (debug) { GTA.UI.Screen.ShowHelpText("~r~ROCKETS FIRED: " + i, 1000, false, false); }
+                        Wait(20);
+                        i++;
+                    }
+                    Wait(330);
+                    while (i <= 90 && !plane.IsDead && !isDone)
+                    {
+                        plane.ForwardSpeed = 250;
+                        World.ShootBullet(plane.Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), player, WeaponHash.Railgun, 100, -1);
+                        if (debug) { GTA.UI.Screen.ShowHelpText("~r~ROCKETS FIRED: " + i, 1000, false, false); }
+                        Wait(20);
+                        i++;
+                        if (i >= 90)
+                            {
+                                delayTime = Game.GameTime;
+                                isDone = true;
+                            }
                         }
                     }
+                   else {
+                    timer++;
+                if(timer >= 10000)
+                    {
+                        isDone = true;
+                        unCall();
+                    }
                 }
+                
             }
-           
-
             void onTick(object sender, EventArgs e)
             {
                 if (planeActive)
                 {
+                    if(!plane.IsInRange(Game.Player.Character.Position, 2200f))
+                    {
+                        isDone=true;
+                        unCall();
+                    }
                     if (isDone)
                     {
                         unCall();
                     }
-                    GTA.UI.Screen.ShowSubtitle("Distance: " + plane.Position.DistanceTo(Game.Player.Character.Position));
+                    if (debug) { GTA.UI.Screen.ShowSubtitle("Distance: " + plane.Position.DistanceTo(Game.Player.Character.Position)); }
+                    foreach (Vehicle jet in jets)
+                    {
+                        jet.ForwardSpeed = 250;
+                    }
                 }
                 if (Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 22, Game.Player.Character.Position.X, Game.Player.Character.Position.Y, Game.Player.Character.Position.Z, 500f))
                 {
+                    if (debug) { GTA.UI.Screen.ShowHelpText("Timepass: " + timePass, 2000, false, false); }
                     newTime = Game.GameTime;
                     timePass = newTime - delayTime;
-                    if (!planeActive && timePass > 60000)
-                    {
-                        callPlane();
-                    }
+                   
+                   
                     OutputArgument projectPos = new OutputArgument();
-                    if (!plane.IsDead)
-                    {
-                        if (Function.Call<bool>(Hash.GET_COORDS_OF_PROJECTILE_TYPE_WITHIN_DISTANCE, Game.Player.Character, WeaponHash.Flare, 500f, projectPos, true) && planeActive && timePass > 60000)
+                  
+                        if (Function.Call<bool>(Hash.GET_COORDS_OF_PROJECTILE_TYPE_WITHIN_DISTANCE, Game.Player.Character, WeaponHash.Flare, 500f, projectPos, true) && (timePass > timeOut || newTime < timeOut))
                         {
-                            Vector3 target = projectPos.GetResult<Vector3>();
+                        Vector3 target = projectPos.GetResult<Vector3>();
+                        if (!planeActive && timePass > timeOut || !planeActive && newTime < timeOut)
+                        {
+                            callPlane(target);
+                        }
+                        if (planeActive)
+                        {
                             strike(target, pilot, plane);
                         }
-                    }
+                        }
                 }
             }
         }
