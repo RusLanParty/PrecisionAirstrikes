@@ -18,6 +18,7 @@ namespace Airstrike
         bool isDone = false;
         Vehicle plane;
         Ped pilot;
+        Ped owner;
         Blip blip;
         int i;
         int delayTime = 0;
@@ -29,6 +30,7 @@ namespace Airstrike
         public Main()
         {
             bool debug = true;
+            bool resp = Settings.GetValue<bool>("SETTINGS", "responsibility", false);
             Tick += onTick;
             List<Vehicle> trash = new List<Vehicle>(World.GetAllVehicles("lazer"));
             List<Ped> musor = new List<Ped>(World.GetAllPeds(PedHash.Blackops03SMY));
@@ -49,7 +51,7 @@ namespace Airstrike
                 Ped player = Game.Player.Character;
                 for(int i = 0; i < 2; i++)
                 {
-                    if (debug) { GTA.UI.Screen.ShowHelpText("Plane called...", 2000, true, false); }
+                    if (debug) { GTA.UI.Screen.ShowHelpText("Jets are on the way...", 2000, false, false); }
                     plane = World.CreateVehicle("lazer", target.Around(15f) + player.UpVector * 300 + player.ForwardVector * -2000, player.Heading);
                     pilot = plane.CreatePedOnSeat(VehicleSeat.Driver, PedHash.Blackops03SMY);
                     plane.IsEngineRunning = true;
@@ -66,12 +68,12 @@ namespace Airstrike
                
                 planeActive = true;
             }
-            void unCall()
+            void unCallPlane()
             {
                 plane.ForwardSpeed = 250;
-                if (!plane.IsInRange(Game.Player.Character.Position, 1500f) && isDone)
+                if (isDone)
                 {
-                    if (debug) { GTA.UI.Screen.ShowHelpText("Plane uncalled...", 2000, true, false); }
+                    if (debug) { GTA.UI.Screen.ShowHelpText("Jets despawned...", 2000, false, false); }
                     planeActive = false;
                     isDone = false;
                     foreach(Vehicle jet in jets)
@@ -90,52 +92,59 @@ namespace Airstrike
                 Ped player = Game.Player.Character;
                     plane.ForwardSpeed = 250;
                     Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X, target.Y, target.Z, 4, 300f, 0f, 0f, 250f, 350f);
-                    if (plane.Position.DistanceTo(target) > 2500)
+                    if (plane.Position.DistanceTo(target) > 2200)
                     {
                     isDone = true;
-                    unCall();
+                    timer = 0;
+                    unCallPlane();
                     }
                    else if (plane.Position.DistanceTo(target) < 600)
                     {
+                    if (resp) {owner = player; }
+                    else if(!resp) {owner = pilot; }
                         i = 1;
-                    while (i <= 30 && !plane.IsDead && !isDone)
+                    while (i <= 15 && !plane.IsDead && !isDone)
                     {
                         plane.ForwardSpeed = 250;
-                        World.ShootBullet(plane.Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), player, WeaponHash.Railgun, 100, -1);
-                        if (debug) { GTA.UI.Screen.ShowHelpText("~r~ROCKETS FIRED: " + i, 1000, false, false); }
+                        World.ShootBullet(plane.Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), owner, WeaponHash.Railgun, 100, -1);
+                        if (debug) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED: " + i, 1000, false, false); }
                         Wait(20);
                         i++;
                     }
-                    Wait(470);
+                    Wait(550);
                     while (i <= 60 && !plane.IsDead && !isDone)
                     {
                         plane.ForwardSpeed = 250;
-                        World.ShootBullet(plane.Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), player, WeaponHash.Railgun, 100, -1);
-                        if (debug) { GTA.UI.Screen.ShowHelpText("~r~ROCKETS FIRED: " + i, 1000, false, false); }
+                        World.ShootBullet(plane.Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 15f)), owner, WeaponHash.Railgun, 100, -1);
+                        if (debug) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED: " + i, 1000, false, false); }
                         Wait(20);
                         i++;
                     }
-                    Wait(330);
+                    Wait(380);
                     while (i <= 90 && !plane.IsDead && !isDone)
                     {
                         plane.ForwardSpeed = 250;
-                        World.ShootBullet(plane.Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), player, WeaponHash.Railgun, 100, -1);
-                        if (debug) { GTA.UI.Screen.ShowHelpText("~r~ROCKETS FIRED: " + i, 1000, false, false); }
+                        World.ShootBullet(plane.Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 10f)), owner, WeaponHash.Railgun, 100, -1);
+                        if (debug) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED: " + i, 1000, false, false); }
                         Wait(20);
                         i++;
                         if (i >= 90)
                             {
                                 delayTime = Game.GameTime;
                                 isDone = true;
+                            timer = 0;
                             }
                         }
                     }
-                   else {
+                   else if((plane.Position.DistanceTo(target) > 600) && plane.Position.DistanceTo(target) < 2000){
                     timer++;
-                if(timer >= 10000)
+                    Wait(0);
+                    if (false) { GTA.UI.Screen.ShowSubtitle("Emergency despawn timer: " + timer, 2000); }
+                    if (timer >= 1000)
                     {
                         isDone = true;
-                        unCall();
+                        unCallPlane();
+                        timer = 0;
                     }
                 }
                 
@@ -147,13 +156,13 @@ namespace Airstrike
                     if(!plane.IsInRange(Game.Player.Character.Position, 2200f))
                     {
                         isDone=true;
-                        unCall();
+                        unCallPlane();
                     }
                     if (isDone)
                     {
-                        unCall();
+                        unCallPlane();
                     }
-                    if (debug) { GTA.UI.Screen.ShowSubtitle("Distance: " + plane.Position.DistanceTo(Game.Player.Character.Position)); }
+                    if (debug) { GTA.UI.Screen.ShowSubtitle("Distance to target: " + plane.Position.DistanceTo(Game.Player.Character.Position)); }
                     foreach (Vehicle jet in jets)
                     {
                         jet.ForwardSpeed = 250;
