@@ -24,13 +24,14 @@ namespace Airstrike
         int delayTime = 0;
         int newTime;
         int timePass;
-        int timeOut =10000;
+        int timeOut;
         int timer=0;
         
         public Main()
         {
-            bool debug = true;
+            bool debug = false;
             bool resp = Settings.GetValue<bool>("SETTINGS", "responsibility", false);
+            timeOut = Settings.GetValue<int>("SETTINGS", "timeOut", 30000);
             Tick += onTick;
             List<Vehicle> trash = new List<Vehicle>(World.GetAllVehicles("lazer"));
             List<Ped> musor = new List<Ped>(World.GetAllPeds(PedHash.Blackops03SMY));
@@ -68,23 +69,26 @@ namespace Airstrike
                
                 planeActive = true;
             }
-            void unCallPlane()
+            void unCallPlane(bool instant)
             {
                 plane.ForwardSpeed = 250;
                 if (isDone)
                 {
-                    if (debug) { GTA.UI.Screen.ShowHelpText("Jets despawned...", 2000, false, false); }
-                    planeActive = false;
-                    isDone = false;
-                    foreach(Vehicle jet in jets)
+                    if (instant || !plane.IsInRange(Game.Player.Character.Position, 1500f))
                     {
-                        if (jet.Driver != null)
+                        if (debug) { GTA.UI.Screen.ShowHelpText("Jets despawned...", 2000, false, false); }
+                        planeActive = false;
+                        isDone = false;
+                        foreach (Vehicle jet in jets)
                         {
-                            jet.Driver.Delete();
+                            if (jet.Driver != null)
+                            {
+                                jet.Driver.Delete();
+                            }
+                            jet.Delete();
                         }
-                        jet.Delete();
+                        jets.Clear();
                     }
-                    jets.Clear();
                 }
             }
             void strike(Vector3 target, Ped pilot, Vehicle plane)
@@ -96,7 +100,7 @@ namespace Airstrike
                     {
                     isDone = true;
                     timer = 0;
-                    unCallPlane();
+                    unCallPlane(false);
                     }
                    else if (plane.Position.DistanceTo(target) < 600)
                     {
@@ -139,11 +143,11 @@ namespace Airstrike
                    else if((plane.Position.DistanceTo(target) > 600) && plane.Position.DistanceTo(target) < 2000){
                     timer++;
                     Wait(0);
-                    if (false) { GTA.UI.Screen.ShowSubtitle("Emergency despawn timer: " + timer, 2000); }
+                    if (true) { GTA.UI.Screen.ShowSubtitle("Emergency despawn timer: " + timer, 2000); }
                     if (timer >= 1000)
                     {
                         isDone = true;
-                        unCallPlane();
+                        unCallPlane(true);
                         timer = 0;
                     }
                 }
@@ -153,14 +157,14 @@ namespace Airstrike
             {
                 if (planeActive)
                 {
-                    if(!plane.IsInRange(Game.Player.Character.Position, 2200f))
+                    if (!plane.IsInRange(Game.Player.Character.Position, 2200f))
                     {
                         isDone=true;
-                        unCallPlane();
+                        unCallPlane(false);
                     }
                     if (isDone)
                     {
-                        unCallPlane();
+                        unCallPlane(false);
                     }
                     if (debug) { GTA.UI.Screen.ShowSubtitle("Distance to target: " + plane.Position.DistanceTo(Game.Player.Character.Position)); }
                     foreach (Vehicle jet in jets)
