@@ -11,12 +11,12 @@ Changelog:
 <li>1.0
 
 <li>1.1
--Fixed memory leak
--Added audio anti spam
--Added radio chatter audio
--Ability to choose plane model via .ini
--Ability to toggle jet audio via .ini
--Ability to toggle chatter audio via .ini
+<br>-Fixed memory leak
+<br>-Added audio anti spam
+<br>-Added radio chatter audio
+<br>-Ability to choose plane model via .ini
+<br>-Ability to toggle jet audio via .ini
+<br>-Ability to toggle chatter audio via .ini
 
 Requirements:
 <li>ASI Loader
