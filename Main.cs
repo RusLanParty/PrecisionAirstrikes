@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using GTA;
 using GTA.Math;
 using GTA.Native;
+using NAudio.Wave;
 
 namespace Airstrike
 {
@@ -24,14 +25,16 @@ namespace Airstrike
         int delayTime = 0;
         int newTime;
         int timePass;
-        int timeOut;
         int timer=0;
-        
+        private WaveFileReader wave;
+        private DirectSoundOut output;
+
         public Main()
         {
             bool debug = false;
-            bool resp = Settings.GetValue<bool>("SETTINGS", "responsibility", false);
-            timeOut = Settings.GetValue<int>("SETTINGS", "timeOut", 30000);
+            bool resp = Settings.GetValue<bool>("SETTINGS", "responsibility", true);
+            int timeOut = Settings.GetValue<int>("SETTINGS", "timeOut", 30000);
+            bool brt = Settings.GetValue<bool>("SETTINGS", "audio", true);
             Tick += onTick;
             List<Vehicle> trash = new List<Vehicle>(World.GetAllVehicles("lazer"));
             List<Ped> musor = new List<Ped>(World.GetAllPeds(PedHash.Blackops03SMY));
@@ -47,6 +50,48 @@ namespace Airstrike
                 }
                 lazer.Delete();
             }
+            void onTick(object sender, EventArgs e)
+            {
+                if (planeActive)
+                {
+                    if (!plane.IsInRange(Game.Player.Character.Position, 2200f))
+                    {
+                        isDone = true;
+                        unCallPlane(false);
+                    }
+                    if (isDone)
+                    {
+                        unCallPlane(false);
+                    }
+                    if (debug) { GTA.UI.Screen.ShowSubtitle("Distance to target: " + plane.Position.DistanceTo(Game.Player.Character.Position)); }
+                    foreach (Vehicle jet in jets)
+                    {
+                        jet.ForwardSpeed = 250;
+                    }
+                }
+                if (Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 22, Game.Player.Character.Position.X, Game.Player.Character.Position.Y, Game.Player.Character.Position.Z, 500f))
+                {
+                    if (debug) { GTA.UI.Screen.ShowHelpText("Timepass: " + timePass, 2000, false, false); }
+                    newTime = Game.GameTime;
+                    timePass = newTime - delayTime;
+
+
+                    OutputArgument projectPos = new OutputArgument();
+
+                    if (Function.Call<bool>(Hash.GET_COORDS_OF_PROJECTILE_TYPE_WITHIN_DISTANCE, Game.Player.Character, WeaponHash.Flare, 500f, projectPos, true) && (timePass > timeOut || newTime < timeOut))
+                    {
+                        Vector3 target = projectPos.GetResult<Vector3>();
+                        if (!planeActive && timePass > timeOut || !planeActive && newTime < timeOut)
+                        {
+                            callPlane(target);
+                        }
+                        if (planeActive)
+                        {
+                            strike(target, pilot, plane);
+                        }
+                    }
+                }
+            }
             void callPlane(Vector3 target)
             {
                 Ped player = Game.Player.Character;
@@ -59,9 +104,8 @@ namespace Airstrike
                     isDone = false;
                     plane.ForwardSpeed = 300;
                     blip = plane.AddBlip();
-                    blip.Color = BlipColor.Blue;
+                    blip.Color = BlipColor.Blue5;
                     pilot.RelationshipGroup = player.RelationshipGroup;
-                    //Function.Call(Hash.TASK_PLANE_CHASE, pilot, player, 0f, 0f, 150f);
                     Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, Game.Player.Character, 0, 0, 0, 4, 300f, 0f, 0f, 300f, 400f);
                     jets.Add(plane);
                     Wait(10);
@@ -108,6 +152,10 @@ namespace Airstrike
                     if (resp) {owner = player; }
                     else if(!resp) {owner = pilot; }
                         i = 1;
+                    if (brt)
+                    {
+                        playBrt();
+                    }
                     while (i <= 15 && !plane.IsDead && !isDone)
                     {
                         plane.ForwardSpeed = 250;
@@ -138,13 +186,17 @@ namespace Airstrike
                                 delayTime = Game.GameTime;
                                 isDone = true;
                             timer = 0;
+                            if (brt)
+                            {
+                                disposeAudio();
+                            }
                             }
                         }
                     }
                    else if((plane.Position.DistanceTo(target) > 600) && plane.Position.DistanceTo(target) < 2000){
                     timer++;
                     Wait(0);
-                    if (true) { GTA.UI.Screen.ShowSubtitle("Emergency despawn timer: " + timer, 2000); }
+                    if (debug) { GTA.UI.Screen.ShowSubtitle("Emergency despawn timer: " + timer, 2000); }
                     if (timer >= 1000)
                     {
                         isDone = true;
@@ -154,48 +206,36 @@ namespace Airstrike
                 }
                 
             }
-            void onTick(object sender, EventArgs e)
+            void playBrt()
             {
-                if (planeActive)
-                {
-                    if (!plane.IsInRange(Game.Player.Character.Position, 2200f))
-                    {
-                        isDone=true;
-                        unCallPlane(false);
-                    }
-                    if (isDone)
-                    {
-                        unCallPlane(false);
-                    }
-                    if (debug) { GTA.UI.Screen.ShowSubtitle("Distance to target: " + plane.Position.DistanceTo(Game.Player.Character.Position)); }
-                    foreach (Vehicle jet in jets)
-                    {
-                        jet.ForwardSpeed = 250;
-                    }
-                }
-                if (Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 22, Game.Player.Character.Position.X, Game.Player.Character.Position.Y, Game.Player.Character.Position.Z, 500f))
-                {
-                    if (debug) { GTA.UI.Screen.ShowHelpText("Timepass: " + timePass, 2000, false, false); }
-                    newTime = Game.GameTime;
-                    timePass = newTime - delayTime;
-                   
-                   
-                    OutputArgument projectPos = new OutputArgument();
-                  
-                        if (Function.Call<bool>(Hash.GET_COORDS_OF_PROJECTILE_TYPE_WITHIN_DISTANCE, Game.Player.Character, WeaponHash.Flare, 500f, projectPos, true) && (timePass > timeOut || newTime < timeOut))
-                        {
-                        Vector3 target = projectPos.GetResult<Vector3>();
-                        if (!planeActive && timePass > timeOut || !planeActive && newTime < timeOut)
-                        {
-                            callPlane(target);
-                        }
-                        if (planeActive)
-                        {
-                            strike(target, pilot, plane);
-                        }
-                        }
-                }
+                wave = new NAudio.Wave.WaveFileReader("scripts/brt/brt.wav");
+                output = new NAudio.Wave.DirectSoundOut();
+                output.Init(new NAudio.Wave.WaveChannel32(wave));
+                output.Play();
             }
+            void disposeAudio()
+            {
+                if(!plane.IsInRange(Game.Player.Character.Position, 1500f))
+                {
+                    if (output != null)
+                    {
+                        if (output.PlaybackState == NAudio.Wave.PlaybackState.Playing)
+                        {
+                            output.Stop();
+                            output.Dispose();
+                            output = null;
+                        }
+                    }
+                    if (wave != null)
+                    {
+                        wave.Dispose();
+                        wave = null;
+                    }
+
+                }
+
+            }
+            
         }
     }
 }

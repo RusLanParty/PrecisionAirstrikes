@@ -16,3 +16,17 @@ D:\Visual Studio\Repos\Airstrike\obj\Debug\Airstrike.csproj.CoreCompileInputs.ca
 D:\Visual Studio\Repos\Airstrike\obj\Debug\Airstrike.csproj.CopyComplete
 D:\Visual Studio\Repos\Airstrike\obj\Debug\Airstrike.dll
 D:\Visual Studio\Repos\Airstrike\obj\Debug\Airstrike.pdb
+D:\Visual Studio\Repos\Airstrike\bin\Debug\Microsoft.Win32.Registry.dll
+D:\Visual Studio\Repos\Airstrike\bin\Debug\NAudio.Asio.dll
+D:\Visual Studio\Repos\Airstrike\bin\Debug\NAudio.Core.dll
+D:\Visual Studio\Repos\Airstrike\bin\Debug\NAudio.dll
+D:\Visual Studio\Repos\Airstrike\bin\Debug\NAudio.Midi.dll
+D:\Visual Studio\Repos\Airstrike\bin\Debug\NAudio.Wasapi.dll
+D:\Visual Studio\Repos\Airstrike\bin\Debug\NAudio.WinForms.dll
+D:\Visual Studio\Repos\Airstrike\bin\Debug\NAudio.WinMM.dll
+D:\Visual Studio\Repos\Airstrike\bin\Debug\System.Security.AccessControl.dll
+D:\Visual Studio\Repos\Airstrike\bin\Debug\System.Security.Principal.Windows.dll
+D:\Visual Studio\Repos\Airstrike\bin\Debug\Microsoft.Win32.Registry.xml
+D:\Visual Studio\Repos\Airstrike\bin\Debug\NAudio.xml
+D:\Visual Studio\Repos\Airstrike\bin\Debug\System.Security.AccessControl.xml
+D:\Visual Studio\Repos\Airstrike\bin\Debug\System.Security.Principal.Windows.xml
