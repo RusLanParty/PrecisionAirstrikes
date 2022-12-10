@@ -79,6 +79,7 @@ namespace Airstrike
                         if (debug) { GTA.UI.Screen.ShowHelpText("Jets despawned...", 2000, false, false); }
                         planeActive = false;
                         isDone = false;
+                        timer = 0;
                         foreach (Vehicle jet in jets)
                         {
                             if (jet.Driver != null)
