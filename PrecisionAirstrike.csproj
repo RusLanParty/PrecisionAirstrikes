@@ -7,8 +7,8 @@
     <ProjectGuid>{CADDB903-9069-4EE4-9F1E-31E74C2C95B2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Airstrike</RootNamespace>
-    <AssemblyName>Airstrike</AssemblyName>
+    <RootNamespace>PrecisionAirstrike</RootNamespace>
+    <AssemblyName>PrecisionAirstrike</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
