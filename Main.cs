@@ -39,7 +39,7 @@ namespace Airstrike
             bool radioAudio = Settings.GetValue<bool>("SETTINGS", "radioAudio", true);
             string model = Settings.GetValue<String>("SETTINGS", "model", "lazer");
             Tick += onTick;
-            List<Vehicle> trash = new List<Vehicle>(World.GetAllVehicles("lazer"));
+            List<Vehicle> trash = new List<Vehicle>(World.GetAllVehicles(model));
             List<Ped> musor = new List<Ped>(World.GetAllPeds(PedHash.Blackops03SMY));
             disposeAudio();
             foreach(Ped p in musor)
@@ -56,8 +56,16 @@ namespace Airstrike
             }
             void onTick(object sender, EventArgs e)
             {
+                GTA.UI.Screen.ShowHelpText("output= " + output + " wave= " + wave, 1000, false, false); 
                 if (planeActive)
                 {
+                    timer++;
+                    if (timer >= 1000)
+                    {
+                        isDone = true;
+                        unCallPlane(true);
+                        timer = 0;
+                    }
                     if (!plane.IsInRange(Game.Player.Character.Position, 3210f))
                     {
                         isDone = true;
@@ -102,13 +110,13 @@ namespace Airstrike
                 for(int i = 0; i < 2; i++)
                 {
                     if (debug) { GTA.UI.Screen.ShowHelpText("Jets are on the way...", 2000, false, false); }
-                    plane = World.CreateVehicle(model, target.Around(15f) + player.UpVector * 300 + player.ForwardVector * -3000, player.Heading);
+                    plane = World.CreateVehicle(model, target.Around(15f) + player.UpVector * 290 + player.ForwardVector * -3000, player.Heading);
                     pilot = plane.CreatePedOnSeat(VehicleSeat.Driver, PedHash.Blackops03SMY);
                     plane.IsEngineRunning = true;
                     isDone = false;
                     plane.ForwardSpeed = 300;
                     blip = plane.AddBlip();
-                    blip.Color = BlipColor.Blue5;
+                    blip.Color = BlipColor.BlueDark;
                     pilot.RelationshipGroup = player.RelationshipGroup;
                     Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, Game.Player.Character, 0, 0, 0, 4, 300f, 0f, 0f, 300f, 400f);
                     jets.Add(plane);
@@ -128,6 +136,7 @@ namespace Airstrike
                 {
                     if (instant || !plane.IsInRange(Game.Player.Character.Position, 3210f))
                     {
+                        if (instant) { GTA.UI.Screen.ShowSubtitle("Time out"); }
                         if (debug) { GTA.UI.Screen.ShowHelpText("Jets despawned...", 2000, false, false); }
                         planeActive = false;
                         isDone = false;
@@ -156,7 +165,6 @@ namespace Airstrike
                     if (plane.Position.DistanceTo(target) > 3210)
                     {
                     isDone = true;
-                    timer = 0;
                     unCallPlane(false);
                     }
                    else if (plane.Position.DistanceTo(target) < 600)
@@ -198,7 +206,7 @@ namespace Airstrike
                             {
                                 delayTime = Game.GameTime;
                                 isDone = true;
-                            timer = 0;
+                            
                             }
                         }
                     }
@@ -206,12 +214,7 @@ namespace Airstrike
                     timer++;
                     Wait(0);
                     if (debug) { GTA.UI.Screen.ShowSubtitle("Emergency despawn timer: " + timer, 2000); }
-                    if (timer >= 1000)
-                    {
-                        isDone = true;
-                        unCallPlane(true);
-                        timer = 0;
-                    }
+                   
                 }
                 
             }
@@ -267,14 +270,14 @@ namespace Airstrike
                             output.Stop();
                             output.Dispose();
                             output = null;
-                            GTA.UI.Screen.ShowHelpText("Disposed output", 1000, true, false);
+                            //GTA.UI.Screen.ShowHelpText("Disposed output", 1000, true, false);
                     }
                     }
                     if (wave != null)
                     {
                         wave.Dispose();
                         wave = null;
-                        GTA.UI.Screen.ShowHelpText("Disposed wave", 1000, true, false);
+                       // GTA.UI.Screen.ShowHelpText("Disposed wave", 1000, true, false);
                 }   
             }
             
