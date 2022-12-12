@@ -36,6 +36,14 @@ Changelog:
 <br>-Added jet camera, press NumPad5 to toggle (key configurable via .ini)
 <br>-The strike itself is more realistic now (watched some videos and tweaked rate of fire etc)
 
+<li>1.3.1
+<br>-Remixed the sound, more bass and cleaned some noise
+<br>-Added bassy distant jet sound, sound doesn't cut off abruptly
+<br>-Added ability to tweak jet spawn height. Beware - lower looks cooler but the chances the jets will crash are higher (don't worry though, they will respawn for another round a short time after)
+
+<li>1.3.2
+<br>-Fixed planes disappearing too early in some cases
+
 Requirements:
 <br><li>ASI Loader
 <br><li>Script Hook V
