@@ -21,14 +21,18 @@ namespace Airstrike
         Ped pilot;
         Ped owner;
         Blip blip;
+        Camera cam;
+        bool cameraSet;
+        bool cameraSet1;
         int i;
+        int j=0;
         int delayTime = 0;
         int newTime;
         int timePass;
         int timer=0;
         private WaveFileReader wave;
         private DirectSoundOut output;
-        bool spamBlock;
+        bool spamBlock = false;
 
         public Main()
         {
@@ -38,7 +42,9 @@ namespace Airstrike
             bool jetAudio = Settings.GetValue<bool>("SETTINGS", "jetAudio", true);
             bool radioAudio = Settings.GetValue<bool>("SETTINGS", "radioAudio", true);
             string model = Settings.GetValue<String>("SETTINGS", "model", "lazer");
+            Keys camKey = Settings.GetValue<Keys>("SETTINGS", "camKey", Keys.NumPad5);
             Tick += onTick;
+            KeyDown += onKeyUp;
             List<Vehicle> trash = new List<Vehicle>(World.GetAllVehicles(model));
             List<Ped> musor = new List<Ped>(World.GetAllPeds(PedHash.Blackops03SMY));
             disposeAudio();
@@ -54,9 +60,22 @@ namespace Airstrike
                 }
                 lazer.Delete();
             }
+            void onKeyUp(object sender, KeyEventArgs e)
+            {
+                if (cameraSet && e.KeyCode == camKey && !cameraSet1)
+                {
+                    cameraSet1 = true;
+                    World.RenderingCamera = cam;
+                }
+                else if (cameraSet && e.KeyCode == camKey && cameraSet1)
+                {
+                    cameraSet1 = false;
+                    World.RenderingCamera = null;
+                }
+            }
             void onTick(object sender, EventArgs e)
             {
-                GTA.UI.Screen.ShowHelpText("output= " + output + " wave= " + wave, 1000, false, false); 
+               // GTA.UI.Screen.ShowHelpText("output= " + output + " wave= " + wave, 1000, false, false); 
                 if (planeActive)
                 {
                     timer++;
@@ -99,7 +118,7 @@ namespace Airstrike
                         }
                         if (planeActive)
                         {
-                            strike(target, pilot, plane);
+                            strike(target, pilot, jets);
                         }
                     }
                 }
@@ -107,27 +126,37 @@ namespace Airstrike
             void callPlane(Vector3 target)
             {
                 Ped player = Game.Player.Character;
-                for(int i = 0; i < 2; i++)
+                Vector3 spwn = new Vector3(target.X, target.Y, 350f);
+                Vector3 spwn1 = new Vector3(target.X + 25f, target.Y + 2f, 351f);
+                for (int i = 1; i <= 2; i++)
                 {
                     if (debug) { GTA.UI.Screen.ShowHelpText("Jets are on the way...", 2000, false, false); }
-                    plane = World.CreateVehicle(model, target.Around(15f) + player.UpVector * 290 + player.ForwardVector * -3000, player.Heading);
+                    if (i == 1) { plane = World.CreateVehicle(model, spwn  + player.ForwardVector * -3000, player.Heading); }
+                    if (i == 2) { plane = World.CreateVehicle(model, spwn1  + player.ForwardVector * -3001, player.Heading); }
                     pilot = plane.CreatePedOnSeat(VehicleSeat.Driver, PedHash.Blackops03SMY);
                     plane.IsEngineRunning = true;
+                    plane.LandingGearState = VehicleLandingGearState.Retracted;
                     isDone = false;
                     plane.ForwardSpeed = 300;
                     blip = plane.AddBlip();
                     blip.Color = BlipColor.BlueDark;
                     pilot.RelationshipGroup = player.RelationshipGroup;
-                    Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, Game.Player.Character, 0, 0, 0, 4, 300f, 0f, 0f, 300f, 400f);
+                    //plane.IsInvincible = true;
+                    //Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X + 2000f, target.Y, 300f, 0, 600f, 0f, target.ToHeading(), 300f, 300f);
                     jets.Add(plane);
-                    Wait(10);
+                    Wait(20);
                 }
                 if (radioAudio)
                 {
-                    int rndFx = Function.Call<int>(Hash.GET_RANDOM_INT_IN_RANGE, 1, 4);
+                    j = 0;
+                    spamBlock = false;
+                    int rndFx = Function.Call<int>(Hash.GET_RANDOM_INT_IN_RANGE, 2, 5);
                     playSfx(rndFx);
                 }
                 planeActive = true;
+                cam = World.CreateCamera(jets[0].Position, jets[0].Rotation, 80f);
+                Function.Call(Hash.ATTACH_CAM_TO_ENTITY, cam, jets[0], 0f, -15f, 2f, true);
+                cameraSet = true;
             }
             void unCallPlane(bool instant)
             {
@@ -136,7 +165,7 @@ namespace Airstrike
                 {
                     if (instant || !plane.IsInRange(Game.Player.Character.Position, 3210f))
                     {
-                        if (instant) { GTA.UI.Screen.ShowSubtitle("Time out"); }
+                        //if (instant) { GTA.UI.Screen.ShowSubtitle("Time out"); }
                         if (debug) { GTA.UI.Screen.ShowHelpText("Jets despawned...", 2000, false, false); }
                         planeActive = false;
                         isDone = false;
@@ -154,68 +183,68 @@ namespace Airstrike
                             jet.Delete();
                         }
                         jets.Clear();
+                        World.RenderingCamera = null;
+                        World.DestroyAllCameras();
+                        cameraSet = false;
                     }
                 }
             }
-            void strike(Vector3 target, Ped pilot, Vehicle plane)
+            void strike(Vector3 target, Ped pilot, List<Vehicle> jets)
             {
                 Ped player = Game.Player.Character;
-                    plane.ForwardSpeed = 250;
-                    Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X, target.Y, target.Z, 4, 300f, 0f, 0f, 250f, 350f);
-                    if (plane.Position.DistanceTo(target) > 3210)
+                    jets[0].ForwardSpeed = 250;
+                    jets[1].ForwardSpeed = 251;
+                if (jets[0].Position.DistanceTo(target) > 3210)
                     {
-                    isDone = true;
-                    unCallPlane(false);
+                        isDone = true;
+                        unCallPlane(false);
                     }
-                   else if (plane.Position.DistanceTo(target) < 600)
+                    if (plane.Position.DistanceTo(target) < 600)
                     {
-                    spamBlock = false;
-                    if (resp) {owner = player; }
-                    else if(!resp) {owner = pilot; }
+                        if (resp) { owner = player; }
+                        else if (!resp) { owner = pilot; }
                         i = 1;
-                    if (jetAudio)
+                    if (jetAudio && j == 0)
                     {
-                        playSfx(0);
+                        j++;
+                        spamBlock = false;
+                        playSfx(1);
+                        // int Fx = Function.Call<int>(Hash.GET_RANDOM_INT_IN_RANGE, 0, 20);
+                        //if (Fx % 2 == 0) { playSfx(0); }
+                        // else if (Fx % 2 != 0) { playSfx(1); }
+
                     }
-                    while (i <= 15 && !plane.IsDead && !isDone)
-                    {
-                        plane.ForwardSpeed = 250;
-                        World.ShootBullet(plane.Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), owner, WeaponHash.Railgun, 100, -1);
+                    while (i <= 70 && !jets[0].IsDead && !isDone)
+                        {
+                        jets[0].ForwardSpeed = 250;
+                        jets[1].ForwardSpeed = 250;
+                        World.ShootBullet(jets[0].Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), owner, WeaponHash.Railgun, 100, -1);
+                        World.ShootBullet(jets[1].Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), owner, WeaponHash.Railgun, 100, -1);
                         if (debug) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED: " + i, 1000, false, false); }
-                        Wait(20);
-                        i++;
-                    }
-                    Wait(550);
-                    while (i <= 60 && !plane.IsDead && !isDone)
-                    {
-                        plane.ForwardSpeed = 250;
-                        World.ShootBullet(plane.Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 15f)), owner, WeaponHash.Railgun, 100, -1);
-                        if (debug) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED: " + i, 1000, false, false); }
-                        Wait(20);
-                        i++;
-                    }
-                    Wait(380);
-                    while (i <= 90 && !plane.IsDead && !isDone)
-                    {
-                        plane.ForwardSpeed = 250;
-                        World.ShootBullet(plane.Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 10f)), owner, WeaponHash.Railgun, 100, -1);
-                        if (debug) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED: " + i, 1000, false, false); }
-                        Wait(20);
-                        i++;
-                        if (i >= 90)
+                            Wait(20);
+                            i++;
+                        if (i >= 70)
+                        {
+                            delayTime = Game.GameTime;
+                            isDone = true;
+                            jets[0].ForwardSpeed = 250;
+                            jets[1].ForwardSpeed = 250;
+                            foreach (Vehicle jet in jets)
                             {
-                                delayTime = Game.GameTime;
-                                isDone = true;
-                            
+                                Function.Call(Hash.TASK_PLANE_MISSION, jet.Driver, jet, 0, player, 0, 0, 0, 8, 0f, 0f, 0f, 0f, 0f);
                             }
                         }
                     }
-                   else if((plane.Position.DistanceTo(target) > 600) && plane.Position.DistanceTo(target) < 2500){
-                    timer++;
-                    Wait(0);
-                    if (debug) { GTA.UI.Screen.ShowSubtitle("Emergency despawn timer: " + timer, 2000); }
-                   
+                    }
+                    else if ((jets[0].Position.DistanceTo(target) > 600) && jets[0].Position.DistanceTo(target) < 2500)
+                    {
+                        timer++;
+                        Wait(0);
+                        if (debug) { GTA.UI.Screen.ShowSubtitle("Emergency despawn timer: " + timer, 2000); }
+
+                    }
                 }
+                   
                 
             }
             void playSfx(int fx)
@@ -224,34 +253,36 @@ namespace Airstrike
                 {
                     switch (fx)
                     {
-                        case 0:
-                            wave = new NAudio.Wave.WaveFileReader("scripts/brt/brt.wav");
-                            output = new NAudio.Wave.DirectSoundOut();
-                            output.Init(new NAudio.Wave.WaveChannel32(wave));
-                            output.Play();
-                            break;
+                        
                         case 1:
                             spamBlock = true;
-                            wave = new NAudio.Wave.WaveFileReader("scripts/brt/radioStrike1.wav");
+                            wave = new NAudio.Wave.WaveFileReader("scripts/brt/brt.wav");
                             output = new NAudio.Wave.DirectSoundOut();
                             output.Init(new NAudio.Wave.WaveChannel32(wave));
                             output.Play();
                             break;
                         case 2:
                             spamBlock = true;
-                            wave = new NAudio.Wave.WaveFileReader("scripts/brt/radioStrike2.wav");
+                            wave = new NAudio.Wave.WaveFileReader("scripts/brt/radioStrike1.wav");
                             output = new NAudio.Wave.DirectSoundOut();
                             output.Init(new NAudio.Wave.WaveChannel32(wave));
                             output.Play();
                             break;
                         case 3:
                             spamBlock = true;
-                            wave = new NAudio.Wave.WaveFileReader("scripts/brt/radioStrike3.wav");
+                            wave = new NAudio.Wave.WaveFileReader("scripts/brt/radioStrike2.wav");
                             output = new NAudio.Wave.DirectSoundOut();
                             output.Init(new NAudio.Wave.WaveChannel32(wave));
                             output.Play();
                             break;
                         case 4:
+                            spamBlock = true;
+                            wave = new NAudio.Wave.WaveFileReader("scripts/brt/radioStrike3.wav");
+                            output = new NAudio.Wave.DirectSoundOut();
+                            output.Init(new NAudio.Wave.WaveChannel32(wave));
+                            output.Play();
+                            break;
+                        case 5:
                             spamBlock = true;
                             wave = new NAudio.Wave.WaveFileReader("scripts/brt/radioStrike4.wav");
                             output = new NAudio.Wave.DirectSoundOut();
@@ -270,6 +301,7 @@ namespace Airstrike
                             output.Stop();
                             output.Dispose();
                             output = null;
+                            spamBlock = false;
                             //GTA.UI.Screen.ShowHelpText("Disposed output", 1000, true, false);
                     }
                     }
@@ -277,10 +309,10 @@ namespace Airstrike
                     {
                         wave.Dispose();
                         wave = null;
+                        spamBlock= false;
                        // GTA.UI.Screen.ShowHelpText("Disposed wave", 1000, true, false);
                 }   
             }
             
         }
     }
-}
