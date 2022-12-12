@@ -46,6 +46,3 @@ Installation:
 <li>Use PrecisionAirstrike.ini to configure
 
 Please do not hesitate to comment if you have any features you would like to be added.
-
-Source code:
-<a href="https://github.com/RusLanParty/Airstrike">GitHub</a>
