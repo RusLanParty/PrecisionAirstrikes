@@ -17,13 +17,14 @@ namespace Airstrike
         List<Vehicle> jets = new List <Vehicle>();
         bool planeActive = false;
         bool isDone = false;
-        Vehicle plane;
+        //Vehicle plane;
         Ped pilot;
         Ped owner;
         Blip blip;
         Camera cam;
         bool cameraSet;
         bool cameraSet1;
+        bool dontPlay = false;
         int i;
         int j=0;
         int delayTime = 0;
@@ -86,7 +87,7 @@ namespace Airstrike
                         unCallPlane(true);
                         timer = 0;
                     }
-                    if (!plane.IsInRange(Game.Player.Character.Position, 3210f))
+                    if (!jets[0].IsInRange(Game.Player.Character.Position, 3210f) || !jets[1].IsInRange(Game.Player.Character.Position, 3210f))
                     {
                         isDone = true;
                         unCallPlane(false);
@@ -95,7 +96,7 @@ namespace Airstrike
                     {
                         unCallPlane(false);
                     }
-                    if (debug) { GTA.UI.Screen.ShowSubtitle("Distance to target: " + plane.Position.DistanceTo(Game.Player.Character.Position)); }
+                    if (debug) { GTA.UI.Screen.ShowSubtitle("Distance to target: " + jets[0].Position.DistanceTo(Game.Player.Character.Position)); }
                     foreach (Vehicle jet in jets)
                     {
                         jet.ForwardSpeed = 250;
@@ -119,6 +120,10 @@ namespace Airstrike
                         }
                         if (planeActive)
                         {
+                            if (jets[0].HasCollided || jets[1].HasCollided)
+                            {
+                                unCallPlane(true);
+                            }
                             strike(target, pilot, jets);
                         }
                     }
@@ -127,30 +132,43 @@ namespace Airstrike
             void callPlane(Vector3 target)
             {
                 Ped player = Game.Player.Character;
+                Vehicle plane;
                 Vector3 spwn = new Vector3(target.X, target.Y, height);
-                Vector3 spwn1 = new Vector3(target.X + 25f, target.Y + 2f, height + 2.0f);
+                Vector3 spwn1 = new Vector3(target.X + 25f, target.Y + 10f, height + 2.0f);
                 for (int i = 1; i <= 2; i++)
                 {
                     if (debug) { GTA.UI.Screen.ShowHelpText("Jets are on the way...", 2000, false, false); }
-                    if (i == 1) { plane = World.CreateVehicle(model, spwn  + player.ForwardVector * -3000, player.Heading); }
-                    if (i == 2) { plane = World.CreateVehicle(model, spwn1  + player.ForwardVector * -3002, player.Heading); }
-                    pilot = plane.CreatePedOnSeat(VehicleSeat.Driver, PedHash.Blackops03SMY);
-                    plane.IsEngineRunning = true;
-                    plane.LandingGearState = VehicleLandingGearState.Retracted;
+                    if (i == 1) { plane = World.CreateVehicle(model, spwn  + player.ForwardVector * -3000, player.Heading);
+                        pilot = plane.CreatePedOnSeat(VehicleSeat.Driver, PedHash.Blackops03SMY);
+                        plane.IsEngineRunning = true;
+                        plane.LandingGearState = VehicleLandingGearState.Retracted;
+                        plane.ForwardSpeed = 300;
+                        blip = plane.AddBlip();
+                        blip.Color = BlipColor.BlueDark;
+                        pilot.RelationshipGroup = player.RelationshipGroup;
+                        jets.Add(plane);
+                    }
+                    else
+                    if (i == 2) { plane = World.CreateVehicle(model, spwn1  + player.ForwardVector * -3002, player.Heading);
+                        pilot = plane.CreatePedOnSeat(VehicleSeat.Driver, PedHash.Blackops03SMY);
+                        plane.IsEngineRunning = true;
+                        plane.LandingGearState = VehicleLandingGearState.Retracted;
+                        plane.ForwardSpeed = 300;
+                        blip = plane.AddBlip();
+                        blip.Color = BlipColor.BlueDark;
+                        pilot.RelationshipGroup = player.RelationshipGroup;
+                        jets.Add(plane);
+                    }
                     isDone = false;
-                    plane.ForwardSpeed = 300;
-                    blip = plane.AddBlip();
-                    blip.Color = BlipColor.BlueDark;
-                    pilot.RelationshipGroup = player.RelationshipGroup;
                     //plane.IsInvincible = true;
                     //Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X + 2000f, target.Y, 300f, 0, 600f, 0f, target.ToHeading(), 300f, 300f);
-                    jets.Add(plane);
                     Wait(20);
                 }
-                if (radioAudio)
+                if (radioAudio && !dontPlay)
                 {
                     j = 0;
                     spamBlock = false;
+                    dontPlay = true;
                     int rndFx = Function.Call<int>(Hash.GET_RANDOM_INT_IN_RANGE, 2, 5);
                     playSfx(rndFx);
                 }
@@ -161,11 +179,16 @@ namespace Airstrike
             }
             void unCallPlane(bool instant)
             {
-                plane.ForwardSpeed = 250;
+                jets[0].ForwardSpeed = 250f;
+                jets[1].ForwardSpeed = 252f;
                 if (isDone)
                 {
-                    if (instant || !plane.IsInRange(Game.Player.Character.Position, 4010f))
+                    if (instant || !jets[0].IsInRange(Game.Player.Character.Position, 4010f) || !jets[1].IsInRange(Game.Player.Character.Position, 4010f))
                     {
+                        if (!instant)
+                        {
+                            dontPlay = false;
+                        }
                         //if (instant) { GTA.UI.Screen.ShowSubtitle("Time out"); }
                         if (debug) { GTA.UI.Screen.ShowHelpText("Jets despawned...", 2000, false, false); }
                         planeActive = false;
@@ -195,12 +218,12 @@ namespace Airstrike
                 Ped player = Game.Player.Character;
                     jets[0].ForwardSpeed = 250;
                     jets[1].ForwardSpeed = 253;
-                if (jets[0].Position.DistanceTo(target) > 3210)
+                if (jets[0].Position.DistanceTo(target) > 3210 || jets[1].Position.DistanceTo(target) > 3210)
                     {
                         isDone = true;
                         unCallPlane(false);
                     }
-                    if (plane.Position.DistanceTo(target) < 600)
+                    if (jets[0].Position.DistanceTo(target) < 600 || jets[1].Position.DistanceTo(target) < 600)
                     {
                         if (resp) { owner = player; }
                         else if (!resp) { owner = pilot; }
@@ -217,8 +240,8 @@ namespace Airstrike
                     }
                     while (i <= 70 && !jets[0].IsDead && !isDone)
                         {
-                        jets[0].ForwardSpeed = 250;
-                        jets[1].ForwardSpeed = 252;
+                        jets[0].ForwardSpeed = 250f;
+                        jets[1].ForwardSpeed = 252f;
                         World.ShootBullet(jets[0].Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), owner, WeaponHash.Railgun, 100, -1);
                         World.ShootBullet(jets[1].Position, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), owner, WeaponHash.Railgun, 100, -1);
                         if (debug) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED: " + i, 1000, false, false); }
@@ -228,8 +251,8 @@ namespace Airstrike
                         {
                             delayTime = Game.GameTime;
                             isDone = true;
-                            jets[0].ForwardSpeed = 250;
-                            jets[1].ForwardSpeed = 253;
+                            jets[0].ForwardSpeed = 250f;
+                            jets[1].ForwardSpeed = 253f;
                             foreach (Vehicle jet in jets)
                             {
                                 Function.Call(Hash.TASK_PLANE_MISSION, jet.Driver, jet, 0, player, 0, 0, 0, 16, 1000f, 0f, 0f, 250f, 500f);
