@@ -18,7 +18,6 @@ Changelog:
 <li>1.1
 <br>-Fixed memory leak
 <br>-Added radio chatter audio
-<br>-Implemented audio anti spam
 <br>-Addon planes support
 <br>-Ability to toggle jet audio via .ini
 <br>-Ability to toggle chatter audio via .ini
