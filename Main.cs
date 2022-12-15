@@ -148,7 +148,7 @@ namespace Airstrike
                         }
                         pilot.RelationshipGroup = player.RelationshipGroup;
                         plane.IsInvincible = true;
-                        Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X, target.Y, target.Z, 4, 0f, 0f, hed,(target.Z + height) / 6.25f, (target.Z + height) / 6.25f);
+                        Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X, target.Y, target.Z, 4, 200f, 0f, hed,(target.Z + height) / 6.25f, (target.Z + height) / 6.25f);
                         jets.Add(plane);
                        
                     }
@@ -168,7 +168,7 @@ namespace Airstrike
                         }
                         pilot.RelationshipGroup = player.RelationshipGroup;
                         plane.IsInvincible = true;
-                        Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X, target.Y, target.Z, 4, 0f, 0f, hed, height / 6.25f, height / 6.25f);
+                        Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X, target.Y, target.Z, 4, 200f, 0f, hed, height / 6.25f, height / 6.25f);
                         jets.Add(plane);
                         
                     }
@@ -184,7 +184,7 @@ namespace Airstrike
                 }
                 planeActive = true;
                 cam = World.CreateCamera(jets[1].Position, jets[1].Rotation, 95f);
-                Function.Call(Hash.ATTACH_CAM_TO_ENTITY, cam, jets[1], 0f, -15f, 2f, true);
+                Function.Call(Hash._ATTACH_CAM_TO_PED_BONE_2, cam, jets[1].Driver, 31086, 0.0f, 90.0f, 28.0f, 0f, -15f, 3.57f, true);
                 cameraSet = true;
             }
             void unCallPlane(bool instant)
@@ -260,7 +260,7 @@ namespace Airstrike
                             Vector3 jet1 = new Vector3(jets[1].Position.X, jets[1].Position.Y, jets[1].Position.Z -1.5f);
                             World.ShootBullet(jet0, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius)) + offset * i , owner, WeaponHash.Railgun, 100, -1);
                             World.ShootBullet(jet1, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius)) + offset * i, owner, WeaponHash.Railgun, 100, -1);
-                            if (true) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED: " + i, 1000, false, false); }
+                            if (false) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED: " + i, 1000, false, false); }
                             Wait(22);
                             i++;
                             if (i >= 65)
