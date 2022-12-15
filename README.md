@@ -3,8 +3,8 @@ Iconic killstreak from MW now in V!
 Features:
 <li>Use a flare to mark your target
 <li>Two jets will spawn and BRRRTTT marked target
-<li>BRT from Insurgency Sandstorm
-<li>Radio chatter from [PROTOTYPE], cut and edited by me (few variations, to not get boring too quickly)
+<li>Sound from Insurgency Sandstorm and youtube videos, remixed and tweaked by me
+<li>Radio chatter from [PROTOTYPE], cut by me (few variations, to not get boring too quickly)
 <li>Toggle jet camera by pressing NumPad5 (configurable via .ini)
 <li>Addon planes supported (just change "lazer" to the spawn name of your added plane in the .ini)
 <li>Configurable via .ini
