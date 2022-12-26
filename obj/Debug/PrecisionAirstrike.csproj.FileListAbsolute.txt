@@ -21,3 +21,5 @@ D:\Visual Studio\Repos\Airstrike\bin\Debug\PrecisionAirstrike.dll
 D:\Visual Studio\Repos\Airstrike\bin\Debug\PrecisionAirstrike.pdb
 D:\Visual Studio\Repos\Airstrike\obj\Debug\PrecisionAirstrike.dll
 D:\Visual Studio\Repos\Airstrike\obj\Debug\PrecisionAirstrike.pdb
+D:\Visual Studio\Repos\Airstrike\bin\Debug\LemonUI.SHVDN3.dll
+D:\Visual Studio\Repos\Airstrike\bin\Debug\LemonUI.SHVDN3.xml
