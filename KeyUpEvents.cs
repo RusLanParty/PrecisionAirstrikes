@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Airstrike;
 using GTA;
+using GTA.Native;
+using GTA.UI;
 
 namespace PrecisionAirstrike
 {
@@ -33,6 +35,12 @@ namespace PrecisionAirstrike
                         Settings.SetValue("SETTINGS", "defaultMode", 2);
                         Settings.Save();
                         Main.mode = 2;
+                    }
+                    else if (Main.strikeMode.SelectedIndex == 2)
+                    {
+                        Settings.SetValue("SETTINGS", "defaultMode", 3);
+                        Settings.Save();
+                        Main.mode = 3;
                     }
                 }
                 else if (Main.menu.Visible && Main.menu.SelectedIndex == 1)
@@ -80,6 +88,23 @@ namespace PrecisionAirstrike
                         Main.radioAudio = false;
                     }
                 }
+                if (Main.menu.Visible == true && Main.menu.SelectedIndex == 4)
+                {
+                    if (Main.trgtmode.SelectedIndex == 0)
+                    {
+                        Settings.SetValue("SETTINGS", "targetingMode", 0);
+                        Settings.Save();
+                        Main.aimMode = 0;
+                        Game.Player.Character.Weapons.Give(WeaponHash.Flare, 0, true, true);
+                    }
+                    else if (Main.trgtmode.SelectedIndex == 1)
+                    {
+                        Settings.SetValue("SETTINGS", "targetingMode", 1);
+                        Settings.Save();
+                        Main.aimMode = 1;
+                        Game.Player.Character.Weapons.Give(WeaponHash.Flashlight, 0, true, true);
+                    }
+                }
 
             }
            
@@ -96,11 +121,13 @@ namespace PrecisionAirstrike
             {
                 Main.cameraSet1 = true;
                 World.RenderingCamera = Main.cam;
+                Main.hudDis = true;
             }
             else if (Main.cameraSet && e.KeyCode == Main.camKey && Main.cameraSet1)
             {
                 Main.cameraSet1 = false;
                 World.RenderingCamera = null;
+                Main.hudDis = false;
             }
         }
     }
