@@ -34,6 +34,7 @@ namespace Airstrike
         public static bool cameraSet;
         public static bool cameraSet1;
         public static Keys camKey;
+        public static Keys showMenuKey;
         int i;
         public static bool resp;
         public static int mode;
@@ -58,7 +59,7 @@ namespace Airstrike
         ObjectPool pool = new ObjectPool();
         public static Vector3 target;
         public static bool hudDis = false;
-        public static NativeMenu menu = new NativeMenu("Precision Airstrike", "Settings");
+        public static NativeMenu menu = new NativeMenu("Precision Airstrike", "By RusLanParty");
         public static NativeListItem<String> strikeMode = new NativeListItem<string>("Mode", "", "Gatling gun", "Missile barrage" , "Drone swarm");
         public static NativeCheckboxItem respons = new NativeCheckboxItem("Responsibility", "If set to true, peds will be aware you are the one responsible for the airstrike (~b~including ~r~cops~s~). If set to false, pilots take the blame");
         public static NativeCheckboxItem jetAud = new NativeCheckboxItem("Jet strike audio");
@@ -152,6 +153,7 @@ namespace Airstrike
             model1 = Settings.GetValue<String>("SETTINGS", "bomberModel", "volatol");
             height = Settings.GetValue<float>("SETTINGS", "height", 300.0f);
             camKey = Settings.GetValue<Keys>("SETTINGS", "camKey", Keys.R);
+            showMenuKey = Settings.GetValue<Keys>("SETTINGS", "showMenuKey", Keys.Delete);
         }
         public Main()
         {
@@ -166,18 +168,17 @@ namespace Airstrike
             menu.Add(trgtmode);
 
             
-            bool debug = true;
+            bool debug = false;
             loadSettings();
             clearMem();
             Tick += onTick;
 
-          
+         
             void onTick(object sender, EventArgs e)
             {
-                if (hudDis)
-                {
-                    Function.Call(Hash.HIDE_HUD_AND_RADAR_THIS_FRAME);
-                }
+                Ped player = Game.Player.Character;
+                Function.Call(Hash.SET_DISABLE_AMBIENT_MELEE_MOVE, player, false);
+                Function.Call(Hash.DISABLE_PLAYER_FIRING, player, false);
                 if (modeLock)
                 {
                     strikeMode.Enabled = false;
@@ -196,7 +197,7 @@ namespace Airstrike
                 }
                 pool.Process();
                
-                Ped player = Game.Player.Character;
+              
                 if(!planeActive || jets.Count == 0)
                 {
                     isDone = false;
@@ -206,7 +207,7 @@ namespace Airstrike
                 {
                     if (timer >= 10000)
                     {
-                       // isDone = true;
+                        isDone = true;
                         unCallPlane(true);
                         timer = 0;
                     }
@@ -230,7 +231,9 @@ namespace Airstrike
                         jet.ForwardSpeed = spd;
                     }
                 }
-               if(aimMode == 0)
+                newTime = Game.GameTime;
+                timePass = newTime - delayTime;
+                if (aimMode == 0)
                 {
                     if (Function.Call<bool>(Hash.IS_EXPLOSION_IN_SPHERE, 22, player.Position.X, player.Position.Y, player.Position.Z, 500f))
                     {
@@ -256,30 +259,31 @@ namespace Airstrike
                         }
                     }
                 }
-               else if(aimMode == 1)
+                else if (aimMode == 1 && timePass > timeOut || newTime < timeOut)
                 {
-                    Function.Call(Hash.SET_DISABLE_AMBIENT_MELEE_MOVE, player, true);
-                    Function.Call(Hash.DISABLE_PLAYER_FIRING, player, true);
+                   
                     if (!isMidStrike)
                     {
                         
                         if (player.Weapons.Current == WeaponHash.Flashlight && player.IsAiming)
                         {
+                            Function.Call(Hash.SET_DISABLE_AMBIENT_MELEE_MOVE, player, true);
+                            Function.Call(Hash.DISABLE_PLAYER_FIRING, player, true);
                             target = rayCast();
                             if (mode == 1)
                             {
-                                World.DrawLightWithRange(target + player.UpVector, Color.Indigo, 15f, 15f);
+                                World.DrawLightWithRange(target + player.UpVector, Color.Indigo, 10f, 10f);
                                 World.DrawLine(player.Weapons.CurrentWeaponObject.Position, target, Color.Indigo);
                             }
                             else if(mode == 2)
                             {
-                                World.DrawLightWithRange(target + player.UpVector, Color.DarkTurquoise, 15f, 15f);
-                                World.DrawLine(player.Weapons.CurrentWeaponObject.Position, target, Color.DarkTurquoise);
+                                World.DrawLightWithRange(target + player.UpVector, Color.Azure, 10f, 10f);
+                                World.DrawLine(player.Weapons.CurrentWeaponObject.Position, target, Color.Azure);
                             }
                             else if (mode == 3)
                             {
-                                World.DrawLightWithRange(target + player.UpVector, Color.Aquamarine, 15f, 15f);
-                                World.DrawLine(player.Weapons.CurrentWeaponObject.Position, target, Color.Aquamarine);
+                                World.DrawLightWithRange(target + player.UpVector, Color.LimeGreen, 10f, 10f);
+                                World.DrawLine(player.Weapons.CurrentWeaponObject.Position, target, Color.LimeGreen);
                             }
 
                             if (Function.Call<bool>(Hash.IS_CONTROL_JUST_PRESSED, 2, 329) && !isMidStrike)
@@ -288,7 +292,7 @@ namespace Airstrike
                                 {
                                     modeLock = true;
                                     callPlane(target);
-                                    
+
                                 }
                                 if (planeActive && jets.Count >= 2)
                                 {
@@ -339,7 +343,7 @@ namespace Airstrike
                                 if (blipEnabled)
                                 {
                                     blip = plane.AddBlip();
-                                    blip.Color = BlipColor.Blue3;
+                                    blip.Color = BlipColor.Purple;
                                 }
                                 pilot.RelationshipGroup = player.RelationshipGroup;
                                 plane.IsInvincible = true;
@@ -370,7 +374,7 @@ namespace Airstrike
                                 if (blipEnabled)
                                 {
                                     blip = plane.AddBlip();
-                                    blip.Color = BlipColor.Blue2;
+                                    blip.Color = BlipColor.Purple;
                                 }
                                 pilot.RelationshipGroup = player.RelationshipGroup;
                                 plane.IsInvincible = true;
@@ -409,7 +413,7 @@ namespace Airstrike
                                 if (blipEnabled)
                                 {
                                     blip = plane.AddBlip();
-                                    blip.Color = BlipColor.Blue6;
+                                    blip.Color = BlipColor.Purple;
                                 }
                                 pilot.RelationshipGroup = player.RelationshipGroup;
                                 plane.IsInvincible = true;
@@ -440,7 +444,7 @@ namespace Airstrike
                                 if (blipEnabled)
                                 {
                                     blip = plane.AddBlip();
-                                    blip.Color = BlipColor.Blue7;
+                                    blip.Color = BlipColor.Purple;
                                 }
                                 pilot.RelationshipGroup = player.RelationshipGroup;
                                 plane.IsInvincible = true;
@@ -702,23 +706,40 @@ namespace Airstrike
                                     }
                                     break;
                                 case 3:
-                                    while (i <= 20 && !jet.IsDead && !isDone)
+                                    while (i <= 3 && !jet.IsDead && !isDone)
                                     {
                                         
                                             jet.ForwardSpeed = spd;
                                             Vector3 offset = RotationToDirection(jet.Rotation);
                                             Vector3 jet0 = new Vector3(jet.Position.X, jet.Position.Y, jet.Position.Z - 7.5f);
-                                            World.AddExplosion(target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius2)) - offset * 80 / i, ExplosionType.BombCluster, 500f, 1f, null, true, false);
-                                            Wait(900);
+                                            World.AddExplosion(target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius2)) - offset * 3 / i, ExplosionType.EmpLauncherEmp, 500f, 1f, null, true, false);
+                                            Wait(200);
                                             // World.ShootBullet(jet0, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius2)) - offset * 10 / i, owner, WeaponHash.HomingLauncher, 100, -1);
                                             if (true) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED1: " + i, 1000, false, false); }
                                             i++;
-                                            if (i >= 20)
+                                            if (i >= 3)
                                             {
+                                            World.AddExplosion(target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius2)), ExplosionType.Plane, 500f, 1f, null, true, false);
                                             Wait(300);
                                             World.Blackout = true;
                                             Wait(300);
                                             World.Blackout = false;
+                                            List<Vehicle> victims = new List<Vehicle>(World.GetAllVehicles());
+                                            foreach(Vehicle v in victims)
+                                            {
+                                                if (v.Model != VehicleHash.Starling)
+                                                {
+                                                    v.EngineHealth = 0f;
+                                                    v.IsEngineRunning = false;
+                                                    v.IsDriveable = false;
+                                                    v.StartAlarm();
+                                                    if (v.IsHelicopter)
+                                                    {
+                                                        v.HeliBladesSpeed = 9.5f;
+                                                        v.HeliEngineHealth = 0f;
+                                                    }
+                                                }
+                                            }
                                             Wait(10);
                                             World.Blackout = true;
                                             Wait(50);

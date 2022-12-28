@@ -108,11 +108,11 @@ namespace PrecisionAirstrike
 
             }
            
-            if (e.KeyCode == Keys.Delete && Main.menu.Visible == false)
+            if (e.KeyCode == Main.showMenuKey && Main.menu.Visible == false)
             {
                 Main.menu.Visible = true;
             }
-            else if(e.KeyCode == Keys.Delete && Main.menu.Visible == true)
+            else if(e.KeyCode == Main.showMenuKey && Main.menu.Visible == true)
             {
                 Main.menu.Visible= false;
             }
