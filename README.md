@@ -58,6 +58,18 @@ Changelog:
 <br>-Added ability to tweak the radius of the strike via ini (if radius set to zero, the shots will draw a straight line)
 <br>-Added ability to toggle blips via ini
 
+<li>2.0
+<br>-New targeting mode - you can switch between flare and the IR Spotlight marker in the menu. Different strikes, different spotlight colors
+<br>-New airstrike, EMP drone swarm. Blast disables all vehicles including planes and helis, and causes a short power surge in the city. Here it is in action It is still WIP, feel free to post your ideas and suggestions
+<br>-Menu adjustments
+<br>-Added effects on radar when planes spawn/despawn
+<br>-Incase of incorrect model name in the ini you will see a warning message, instead of crashing
+<br>-All strikes slightly tweaked
+<br>-Script cleans memory on loading, disposes of the models if they exist. Feel free to restart midgame if needed, should be stable now
+<br>-Player receives flare/spotlight automatically when selecting targeting mode
+<br>-Added ability to change menu key
+<br>-Various bug fixes
+
 Requirements:
 <br><li>ASI Loader
 <br><li>Script Hook V
