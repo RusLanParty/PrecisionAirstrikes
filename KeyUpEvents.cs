@@ -26,19 +26,19 @@ namespace PrecisionAirstrike
                 {
                     if (Main.strikeMode.SelectedIndex == 0)
                     {
-                        Settings.SetValue("SETTINGS", "defaultMode", 1);
+                        Settings.SetValue("SETTINGS", "currentMode", 1);
                         Settings.Save();
                         Main.mode = 1;
                     }
                     else if (Main.strikeMode.SelectedIndex == 1)
                     {
-                        Settings.SetValue("SETTINGS", "defaultMode", 2);
+                        Settings.SetValue("SETTINGS", "currentMode", 2);
                         Settings.Save();
                         Main.mode = 2;
                     }
                     else if (Main.strikeMode.SelectedIndex == 2)
                     {
-                        Settings.SetValue("SETTINGS", "defaultMode", 3);
+                        Settings.SetValue("SETTINGS", "currentMode", 3);
                         Settings.Save();
                         Main.mode = 3;
                     }
