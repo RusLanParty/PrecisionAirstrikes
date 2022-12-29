@@ -289,8 +289,8 @@ namespace Airstrike
                                 World.DrawLightWithRange(target + player.UpVector, Color.DarkGreen, 10f, 10f);
                                 World.DrawLine(player.Weapons.CurrentWeaponObject.Position, target, Color.DarkGreen);
                             }
-
-                            if (Function.Call<bool>(Hash.IS_CONTROL_JUST_PRESSED, 2, 329) && !isMidStrike)
+                            
+                            if (Function.Call<bool>(Hash.IS_CONTROL_JUST_PRESSED, 0, 24) && !isMidStrike)
                             {
                                 Function.Call(Hash.SET_DISABLE_AMBIENT_MELEE_MOVE, player, true);
                                 Function.Call(Hash.DISABLE_PLAYER_FIRING, player, true);
@@ -740,13 +740,14 @@ namespace Airstrike
                                             {
                                                 if (v.Model != VehicleHash.Starling)
                                                 {
-                                                    v.EngineHealth = 0f;
-                                                    v.IsEngineRunning = false;
-                                                    v.IsConsideredDestroyed = false;
-                                                    v.StartAlarm();
+                                                  v.EngineHealth = 0f;
+                                                  v.IsEngineRunning = false;
+                                                  v.BodyHealth = 0f;
+                                                  v.Health = 0;
+
                                                     if (v.IsHelicopter)
                                                     {
-                                                        //v.HeliBladesSpeed = 9.5f;
+                                                        v.HeliBladesSpeed = 8.5f;
                                                         v.HeliEngineHealth = 0f;
                                                     }
                                                 }
