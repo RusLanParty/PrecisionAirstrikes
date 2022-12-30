@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,14 +10,19 @@ using GTA.Native;
 
 namespace PrecisionAirstrike
 {
-    internal class HideHudTick: Script
+    internal class VariousTickEvents: Script
     {
-        public HideHudTick()
+        public VariousTickEvents()
         {
             Tick += onTick;
         }
         void onTick(object sender, EventArgs e)
         {
+            if (Main.poolLoaded)
+            {
+                Main.pool.Process();
+            }
+            
             if (Main.hudDis)
             {
                 Function.Call(Hash.DISPLAY_RADAR, false);
@@ -25,6 +31,7 @@ namespace PrecisionAirstrike
             {
                 Function.Call(Hash.DISPLAY_RADAR, true);
             }
+          
         }
     }
 }

@@ -81,8 +81,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HideHudTick.cs" />
-    <Compile Include="KeyUpEvents.cs" />
+    <Compile Include="VariousTickEvents.cs" />
+    <Compile Include="TriggerEvents.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

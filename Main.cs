@@ -44,6 +44,7 @@ namespace Airstrike
         public static int timePass;
         int timer=0;
         bool isMidStrike = false;
+        public static bool poolLoaded=false;
         public static float height;
         public static bool blipEnabled;
         public static bool jetAudio;
@@ -56,16 +57,21 @@ namespace Airstrike
         private WaveFileReader wave;
         private DirectSoundOut output;
         bool spamBlock = false;
-        ObjectPool pool = new ObjectPool();
+        public static ObjectPool pool = new ObjectPool();
         public static Vector3 target;
         public static bool hudDis = false;
         public static NativeMenu menu = new NativeMenu("Precision Airstrikes");
+        public static NativeItem credit = new NativeItem("Made by ~t~RusLanParty~s~ (Ruslan Libin)", "Thank you for using my mod. If you have any suggestions or bug reports, please contact me on GTA5Mods.\nI only upload to ~g~GTA5Mods~s~, so if you downloaded this mod from any other website, I strongly suggest to ~r~remove~s~ it and scan your PC for viruses. You can say \"thanks\", if you're feeling generous~s~ :) \npatreon.com/RusLanParty. Have a nice life!");
         public static NativeListItem<String> strikeMode = new NativeListItem<string>("Mode", "", "Gatling gun", "Missile barrage" , "Drone swarm");
+        public static NativeListItem<String> trgtmode = new NativeListItem<String>("Targeting mode", "Choose whether to use a ~r~flare~s~, or an ~r~IR spotlight~s~ (visible only for the pilots, using night vision) to mark your target. \nYou can press ~y~enter~s~ or scroll through the options to equip chosen marker.", "Flare", "IR Spotlight");
+        public static NativeMenu subMenu = new NativeMenu("Options", "Options");
+        public static NativeCheckboxItem jetAud = new NativeCheckboxItem("Gatling gun sound");
+        public static NativeCheckboxItem radAud = new NativeCheckboxItem("Radio chatter");
         public static NativeCheckboxItem respons = new NativeCheckboxItem("Responsibility", "If set to true, peds will be aware you are the one responsible for the airstrike (~b~including ~r~cops~s~). If set to false, pilots take the blame.");
-        public static NativeCheckboxItem jetAud = new NativeCheckboxItem("Jet strike audio");
-        public static NativeCheckboxItem radAud = new NativeCheckboxItem("Radio audio");
-        public static NativeListItem<String> trgtmode = new NativeListItem<String>("Targeting mode", "Choose whether to use a ~r~flare~s~, or an ~p~IR Spotlight~s~ (visible only to pilots) to mark your target.", "Flare", "IR Spotlight");
-
+        public static NativeSliderItem heightSlide = new NativeSliderItem("Height");
+        public static NativeSliderItem radSlide = new NativeSliderItem("Gatling gun radius");
+        public static NativeSliderItem rad2Slide = new NativeSliderItem("Missiles radius");
+        public static NativeCheckboxItem blipsCheck = new NativeCheckboxItem("Plane blips");
         void clearMem()
         {
             List<Ped> musor = new List<Ped>(World.GetAllPeds(PedHash.Blackops03SMY));
@@ -91,20 +97,18 @@ namespace Airstrike
                 p.Delete();
             }
             System.GC.Collect();
+            if(World.RenderingCamera != null)
+            {
+                World.RenderingCamera = null;
+                World.DestroyAllCameras();
+            }
 
         }
         void loadSettings()
         {
-            resp = Settings.GetValue<bool>("SETTINGS", "responsibility", true);
-            if (resp)
-            {
-                respons.Checked = true;
-            }
-            else if (!resp)
-            {
-                respons.Checked = false;
-            }
-            int currentMode = Settings.GetValue<int>("SETTINGS", "currentMode", 1);
+            resp = Settings.GetValue<bool>("FORSCRIPTTOREAD", "responsibility", true);
+            respons.Checked = resp;
+            int currentMode = Settings.GetValue<int>("FORSCRIPTTOREAD", "currentMode", 1);
             mode = currentMode;
             if (currentMode == 1)
             {
@@ -118,25 +122,11 @@ namespace Airstrike
             {
                 strikeMode.SelectedItem = "Drone swarm";
             }
-            jetAudio = Settings.GetValue<bool>("SETTINGS", "jetAudio", true);
-            if (jetAudio)
-            {
-                jetAud.Checked = true;
-            }
-            else if (!jetAudio)
-            {
-                jetAud.Checked = false;
-            }
-            radioAudio = Settings.GetValue<bool>("SETTINGS", "radioAudio", true);
-            if (radioAudio)
-            {
-                radAud.Checked = true;
-            }
-            else if (!radioAudio)
-            {
-                radAud.Checked = false;
-            }
-            aimMode = Settings.GetValue<int>("SETTINGS", "targetingMode", 1);
+            jetAudio = Settings.GetValue<bool>("FORSCRIPTTOREAD", "jetAudio", true);
+            jetAud.Checked = jetAudio;
+            radioAudio = Settings.GetValue<bool>("FORSCRIPTTOREAD", "radioAudio", true);
+            radAud.Checked = radioAudio;
+            aimMode = Settings.GetValue<int>("FORSCRIPTTOREAD", "targetingMode", 1);
             if(aimMode == 1)
             {
                 trgtmode.SelectedItem = "IR Spotlight";
@@ -145,45 +135,84 @@ namespace Airstrike
             {
                 trgtmode.SelectedItem = "Flare";
             }
-            blipEnabled = Settings.GetValue<bool>("SETTINGS", "blips", true);
-            radius = Settings.GetValue<float>("SETTINGS", "radius", 1f);
-            radius2 = Settings.GetValue<float>("SETTINGS", "radius2", 1f);
+            height = Settings.GetValue<float>("FORSCRIPTTOREAD", "height", 300.0f);
+            blipEnabled = Settings.GetValue<bool>("FORSCRIPTTOREAD", "planeBlips", true);
+            blipsCheck.Checked = blipEnabled;
+            radius = Settings.GetValue<float>("FORSCRIPTTOREAD", "radius", 1f);
+            radius2 = Settings.GetValue<float>("FORSCRIPTTOREAD", "radius2", 1f);
             timeOut = Settings.GetValue<int>("SETTINGS", "timeOut", 30000);
             model = Settings.GetValue<String>("SETTINGS", "jetModel", "lazer");
             model1 = Settings.GetValue<String>("SETTINGS", "bomberModel", "volatol");
-            height = Settings.GetValue<float>("SETTINGS", "height", 300.0f);
             camKey = Settings.GetValue<Keys>("SETTINGS", "camKey", Keys.R);
             showMenuKey = Settings.GetValue<Keys>("SETTINGS", "showMenuKey", Keys.Delete);
+
         }
         public Main()
         {
-            //UI
-           
-            pool.Add(menu);
-            menu.UseMouse = false;
-            menu.Add(strikeMode);
-            menu.Add(respons);
-            menu.Add(jetAud);
-            menu.Add(radAud);
-            menu.Add(trgtmode);
-            menu.Banner.Color = Color.Transparent;
-            menu.TitleFont = GTA.UI.Font.Monospace;
-            
             bool debug = false;
             loadSettings();
             clearMem();
-            Tick += onTick;
+            //UI
+            menu.UseMouse = false;
+            subMenu.UseMouse = false;
+            pool.Add(menu);
+            pool.Add(subMenu);
+            menu.Add(strikeMode);
+            switch (mode)
+            {
+                case 1:
+                    Main.strikeMode.Description = "~y~2~s~ jets with gatling guns, delivering a burst of ~r~180~s~ rounds each. Precise and deadly.";
+                    break;
+                case 2:
+                    Main.strikeMode.Description = "~y~2~s~ stealth jets with ~r~45~s~ medium sized missiles each. Good against groups of vehicles.";
+                    break;
+                case 3:
+                    Main.strikeMode.Description = "~y~20~s~ drones, each carrying ~r~15~s~ small missiles and an EMP generator. When the swarm gets close to the target it starts raining down missiles, and then generates an ~b~electro magnetic pulse~s~, disabling all vehicles in area, including aircraft. Good against helis.";
+                    break;
+            }
+            menu.Add(trgtmode);
+            menu.AddSubMenu(subMenu);
+            menu.Title.Shadow = true;
+            menu.Title.Outline = true;
+            subMenu.Title.Shadow = true;
+            subMenu.Title.Outline = true;
+            heightSlide.Multiplier = 50;
+            heightSlide.Maximum = 350;
+            heightSlide.Value = (int)height - 150;
+            heightSlide.Description = "The height at which planes will spawn: ~y~" + height;
+            radSlide.Maximum = 20;
+            rad2Slide.Maximum = 20;
+            radSlide.Value = (int)radius;
+            radSlide.Description = "Radius of the gattling gun: ~y~" + radius;
+            rad2Slide.Value = (int)radius2;
+            rad2Slide.Description = "Radius of the missile barrage: ~y~" + radius2;
+            subMenu.Add(jetAud);
+            subMenu.Add(radAud);
+            subMenu.Add(respons);
+            subMenu.Add(blipsCheck);
+            subMenu.Add(radSlide);
+            subMenu.Add(rad2Slide);
+            subMenu.Add(heightSlide);
+            subMenu.Add(credit);
+            
 
+            menu.Banner.Color = Color.Transparent;
+            menu.TitleFont = GTA.UI.Font.Monospace;
+            menu.SubtitleFont = GTA.UI.Font.ChaletComprimeCologne;
+            subMenu.Banner.Color = Color.Transparent;
+            subMenu.TitleFont = GTA.UI.Font.Monospace;
+
+            Tick += onTick;
+            poolLoaded = true;
          
             void onTick(object sender, EventArgs e)
             {
-
                 Ped player = Game.Player.Character;
-                if (timeOut - timePass > 0)
+                if (timeOut - timePass > 0 && newTime >= timeOut)
                 {
-                    menu.Subtitle = "~r~Timeout: ~s~" + (timeOut - timePass);
+                    menu.Subtitle = "Timeout: " + (timeOut - timePass);
                 }
-                else { menu.Subtitle = "~g~Ready~s~, awaiting target input"; }
+                else { menu.Subtitle = "Ready. Awaiting target input."; }
                 if (debug && jets.Count < 2) { GTA.UI.Screen.ShowSubtitle("isDone= " + isDone, 2000); }
                 else if(debug && jets.Count >= 2) { GTA.UI.Screen.ShowSubtitle("isDone= " + isDone + " Distance to target: " + jets[0].Position.DistanceTo(player.Position), 2000); }
                 if (modeLock)
@@ -193,6 +222,10 @@ namespace Airstrike
                     jetAud.Enabled = false;
                     radAud.Enabled = false;
                     trgtmode.Enabled = false;
+                    rad2Slide.Enabled = false;
+                    radSlide.Enabled = false;
+                    blipsCheck.Enabled = false;
+                    heightSlide.Enabled = false;
                 }
                 if (!modeLock)
                 {
@@ -201,10 +234,12 @@ namespace Airstrike
                     jetAud.Enabled = true;
                     radAud.Enabled = true;
                     trgtmode.Enabled = true;
+                    rad2Slide.Enabled = true;
+                    radSlide.Enabled = true;
+                    blipsCheck.Enabled = true;
+                    heightSlide.Enabled = true;
                 }
-                pool.Process();
-               
-              
+                
                 if(!planeActive || jets.Count == 0)
                 {
                     isDone = false;
@@ -212,7 +247,7 @@ namespace Airstrike
                 }
                 if (planeActive && jets.Count >= 2)
                 {
-                    if (timer >= 50000)
+                    if (timer >= 70000)
                     {
                         isDone = true;
                         unCallPlane(true);
@@ -321,6 +356,7 @@ namespace Airstrike
                 Vector3 spwn = new Vector3(target.X, target.Y - 3000f, target.Z + height);
                 Vector3 spwn1 = new Vector3(target.X + 45.0f, target.Y - 2940f, target.Z + height);
                 isMidStrike = true;
+               
                 switch (mode)
                 {
                     case 1:
@@ -415,7 +451,7 @@ namespace Airstrike
                                 }
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                                 plane.DirtLevel = 1000f;
-                                plane.Mods.PrimaryColor = VehicleColor.WornDarkGreen;
+                                plane.Mods.PrimaryColor = VehicleColor.MetallicBlack;
                                 float hed = Function.Call<float>(Hash.GET_HEADING_FROM_VECTOR_2D, target.X - plane.Position.X, target.Y - plane.Position.Y);
                                 plane.Heading = hed;
                                 pilot = plane.CreatePedOnSeat(VehicleSeat.Driver, PedHash.Blackops03SMY);
@@ -446,7 +482,7 @@ namespace Airstrike
                                 }
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                                 plane.DirtLevel = 1000f;
-                                plane.Mods.PrimaryColor = VehicleColor.WornDarkGreen;
+                                plane.Mods.PrimaryColor = VehicleColor.MetallicBlack;
                                 float hed = Function.Call<float>(Hash.GET_HEADING_FROM_VECTOR_2D, target.X - plane.Position.X, target.Y - plane.Position.Y);
                                 plane.Heading = hed;
                                 pilot = plane.CreatePedOnSeat(VehicleSeat.Driver, PedHash.Blackops03SMY);
@@ -527,15 +563,15 @@ namespace Airstrike
                 cam = World.CreateCamera(jets[1].Position, jets[1].Rotation, 110f);
                 if (mode == 1)
                 {
-                    Function.Call(Hash._ATTACH_CAM_TO_PED_BONE_2, cam, jets[1].Driver, 31086, 0.0f, 90.0f, 28.0f, 0f, -15f, 3.57f, true);
+                    Function.Call(Hash._ATTACH_CAM_TO_PED_BONE_2, cam, jets[0].Driver, 31086, 0.0f, 90.0f, 28.0f, 0f, -15f, 3.57f, true);
                 }
                 else if (mode == 2)
                 {
-                    Function.Call(Hash._ATTACH_CAM_TO_PED_BONE_2, cam, jets[1].Driver, 31086, 0.0f, 90.0f, 0.0f, 0f, -35f, 3.57f, true);
+                    Function.Call(Hash._ATTACH_CAM_TO_PED_BONE_2, cam, jets[0].Driver, 31086, 0.0f, 90.0f, 0.0f, 0f, -35f, 3.57f, true);
                 }
                 else if (mode == 3)
                 {
-                    Function.Call(Hash._ATTACH_CAM_TO_PED_BONE_2, cam, jets[15].Driver, 31086, 0.0f, 90.0f, 0.0f, 0f, -10f, 0.2f, true);
+                    Function.Call(Hash._ATTACH_CAM_TO_PED_BONE_2, cam, jets[12].Driver, 31086, 0.0f, 90.0f, 0.0f, 0f, -8f, 0.3f, true);
                 }
 
                 cameraSet = true;
@@ -567,18 +603,21 @@ namespace Airstrike
                             planeActive = false;
                             isDone = false;
                             timer = 0;
-                            if (jetAudio)
+                            if (jetAudio || radioAudio)
                             {
                                 disposeAudio();
+                                j = 0;
                             }
                             World.RenderingCamera = null;
                             World.DestroyAllCameras();
                             isMidStrike = false;
                             cameraSet = false;
+                            cameraSet1 = false;
                             modeLock = false;
                             timer = 0;
                             Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                             hudDis = false;
+                            j = 0;
                         }
                     }
                 }
@@ -633,6 +672,7 @@ namespace Airstrike
                             switch (mode)
                             {
                                 case 1:
+                                    i = 91;
                                     if (jetAudio && j == 0 && mode == 1)
                                     {
                                         j++;
@@ -643,35 +683,35 @@ namespace Airstrike
                                         // else if (Fx % 2 != 0) { playSfx(1); }
 
                                     }
-                                    while (i <= 41 && !isDone)
+                                    while (i >= 1 && !isDone)
                                     {
                                         foreach (Vehicle jetFire in jets)
                                         {
                                             jetFire.ForwardSpeed = spd;
                                             Vector3 offset = RotationToDirection(jetFire.Rotation);
                                             Vector3 jet0 = new Vector3(jetFire.Position.X, jetFire.Position.Y, jetFire.Position.Z - 5.5f);
-                                            World.ShootBullet(jet0, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius)) - offset * 41 / i, owner, WeaponHash.Railgun, 100, -1);
+                                            World.ShootBullet(jet0, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius)) - offset * i / 2, owner, WeaponHash.Railgun, 100, -1);
                                             Wait(5);
                                             if (false) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED: " + i, 1000, false, false); }
-                                            i++;
+                                            i--;
                                         }
                                        
 
                                     }
                                     i = 1;
-                                    Wait(20);
-                                    while (i <= 41 && !jet.IsDead && !isDone)
+                                    Wait(600);
+                                    while (i <= 91 && !jet.IsDead && !isDone)
                                     {
                                         foreach(Vehicle jetFire in jets)
                                         {
                                             jetFire.ForwardSpeed = spd;
                                             Vector3 offset = RotationToDirection(jetFire.Rotation);
                                             Vector3 jet0 = new Vector3(jetFire.Position.X, jetFire.Position.Y, jetFire.Position.Z - 5.5f);
-                                            World.ShootBullet(jet0, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius)) + offset * i, owner, WeaponHash.Railgun, 100, -1);
+                                            World.ShootBullet(jet0, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius)) + offset * i / 2, owner, WeaponHash.Railgun, 100, -1);
                                             Wait(5);
                                             if (false) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED: " + i, 1000, false, false); }
                                             i++;
-                                            if (i >= 41)
+                                            if (i >= 91)
                                             {
                                                 delayTime = Game.GameTime;
                                                 isDone = true;
@@ -682,23 +722,24 @@ namespace Airstrike
                                     }
                                     break;
                                 case 2:
-                                    while (i <= 45 && !jet.IsDead && !isDone)
+                                    i = 46;
+                                    while (i >= 1 && !jet.IsDead && !isDone)
                                     {
                                         foreach(Vehicle jetFire in jets)
                                         {
                                             jetFire.ForwardSpeed = spd;
                                             Vector3 offset = RotationToDirection(jetFire.Rotation);
                                             Vector3 jet0 = new Vector3(jetFire.Position.X, jetFire.Position.Y, jetFire.Position.Z - 7.5f);
-                                            World.ShootBullet(jet0, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius2)) - offset * 45 / i, owner, WeaponHash.HomingLauncher, 100, -1);
+                                            World.ShootBullet(jet0, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius2)) - offset * i , owner, WeaponHash.HomingLauncher, 100, -1);
                                             Wait(10);
                                             if (false) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED1: " + i, 1000, false, false); }
-                                            i++;
+                                            i--;
                                         }
                                        
                                     }
                                     i = 1;
-                                    Wait(700);
-                                    while (i <= 45 && !jet.IsDead && !isDone)
+                                    Wait(550);
+                                    while (i <= 46 && !jet.IsDead && !isDone)
                                     {
                                         foreach(Vehicle jetFire in jets)
                                         {
@@ -709,7 +750,7 @@ namespace Airstrike
                                             Wait(10);
                                             if (false) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED2: " + i, 1000, false, false); }
                                             i++;
-                                            if (i >= 45)
+                                            if (i >= 46)
                                             {
                                                 delayTime = Game.GameTime;
                                                 isDone = true;
@@ -721,38 +762,39 @@ namespace Airstrike
                                     break;
                                 case 3:
                                    
-                                    while (i <= 20 && !jet.IsDead && !isDone)
+                                    while (i <= 15 && !jet.IsDead && !isDone)
                                     {
                                             jet.ForwardSpeed = spd;
                                         Vector3 offset = RotationToDirection(jet.Rotation);
                                         foreach(Vehicle jet1 in jets)
                                         {
                                             Vector3 jet0 = new Vector3(jet1.Position.X, jet1.Position.Y, jet1.Position.Z - 7.5f);
-                                            World.ShootBullet(jet0, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius2)) - offset * 20 / i, owner, WeaponHash.HomingLauncher, 100, -1);
+                                            World.ShootBullet(jet0, target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), owner, WeaponHash.HomingLauncher, 100, -1);
                                             Wait(20);
                                         }
                                             if (debug) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED1: " + i, 1000, false, false); }
                                             i++;
-                                            if (i >= 20)
+                                            if (i >= 15)
                                             {
                                             List<Vehicle> victims = new List<Vehicle>(World.GetAllVehicles());
                                             foreach (Vehicle v in victims)
                                             {
                                                 if (v.Model != VehicleHash.Starling)
                                                 {
-                                                  v.EngineHealth = 0f;
-                                                  v.IsEngineRunning = false;
-                                                  v.BodyHealth = 0f;
-                                                  v.Health = 0;
+                                                    Function.Call(Hash.SET_VEHICLE_ENGINE_ON, v, false, true, true);
+                                                    v.EngineHealth = -4000f;
+                                                    v.IsDriveable = true;
+                                                    v.IsConsideredDestroyed = false;
+                                                  
 
                                                     if (v.IsHelicopter)
                                                     {
-                                                        v.HeliBladesSpeed = 8.5f;
-                                                        v.HeliEngineHealth = 0f;
+                                                        Function.Call(Hash.SET_VEHICLE_ENGINE_ON, v, false, true, true);
+                                                        v.HeliEngineHealth = -4000f;
                                                     }
                                                 }
                                             }
-                                            World.AddExplosion(target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, radius2)), ExplosionType.Tanker, 15f, 1f, null, true, false);
+                                            World.AddExplosion(target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 20f)), ExplosionType.Tanker, 15f, 1f, null, true, false);
                                             Wait(300);
                                             World.Blackout = true;
                                             Wait(300);
