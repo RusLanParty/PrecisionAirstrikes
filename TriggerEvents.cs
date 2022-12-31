@@ -28,7 +28,22 @@ namespace PrecisionAirstrike
             Main.radSlide.ValueChanged += radChange;
             Main.rad2Slide.ValueChanged += rad2Change;
             Main.blipsCheck.CheckboxChanged += pBlipsChange;
-            
+            Main.hudCheck.CheckboxChanged += hudChange;
+        }
+        void hudChange(object sender, EventArgs e)
+        {
+            if (Main.hudCheck.Checked)
+            {
+                Settings.SetValue("FORSCRIPTTOREAD", "hideHud", true);
+                Settings.Save();
+                Main.hideHud = true;
+            }
+            else if (!Main.hudCheck.Checked)
+            {
+                Settings.SetValue("FORSCRIPTTOREAD", "hideHud", false);
+                Settings.Save();
+                Main.hideHud = false;
+            }
         }
         void pBlipsChange(object sender, EventArgs e)
         {
@@ -175,28 +190,30 @@ namespace PrecisionAirstrike
        
         void onKeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Main.showMenuKey && Main.menu.Visible == false && Main.subMenu.Visible == false)
+            if (!Main.controller)
             {
-                Main.menu.Visible = true;
+                if (e.KeyCode == Main.showMenuKey && Main.menu.Visible == false && Main.subMenu.Visible == false)
+                {
+                    Main.menu.Visible = true;
+                }
+                else if (e.KeyCode == Main.showMenuKey && Main.menu.Visible == true)
+                {
+                    Main.menu.Visible = false;
+                }
+
+                if (Main.cameraSet && e.KeyCode == Main.camKey && !Main.cameraSet1)
+                {
+                    Main.cameraSet1 = true;
+                    World.RenderingCamera = Main.cam;
+                    Main.hudDis = true;
+                }
+                else if (Main.cameraSet && e.KeyCode == Main.camKey && Main.cameraSet1)
+                {
+                    Main.cameraSet1 = false;
+                    World.RenderingCamera = null;
+                    Main.hudDis = false;
+                }
             }
-            else if(e.KeyCode == Main.showMenuKey && Main.menu.Visible == true)
-            {
-                Main.menu.Visible= false;
-            }
-           
-            if (Main.cameraSet && e.KeyCode == Main.camKey && !Main.cameraSet1)
-            {
-                Main.cameraSet1 = true;
-                World.RenderingCamera = Main.cam;
-                Main.hudDis = true;
-            }
-            else if (Main.cameraSet && e.KeyCode == Main.camKey && Main.cameraSet1)
-            {
-                Main.cameraSet1 = false;
-                World.RenderingCamera = null;
-                Main.hudDis = false;
-            }
-            
         }
     }
 }

@@ -57,9 +57,13 @@ namespace Airstrike
         private WaveFileReader wave;
         private DirectSoundOut output;
         bool spamBlock = false;
+        public static bool controller = false;
+        public static int shw;
+        public static int conCam;
         public static ObjectPool pool = new ObjectPool();
         public static Vector3 target;
         public static bool hudDis = false;
+        public static bool hideHud = false;
         public static NativeMenu menu = new NativeMenu("Precision Airstrikes");
         public static NativeItem credit = new NativeItem("Made by ~t~RusLanParty~s~ (Ruslan Libin)", "Thank you for using my mod. If you have any suggestions or bug reports, please contact me on GTA5Mods.\nI only upload to ~g~GTA5Mods~s~, so if you downloaded this mod from any other website, I strongly suggest to ~r~remove~s~ it and scan your PC for viruses. You can say \"thanks\", if you're feeling generous~s~ :) \npatreon.com/RusLanParty. Have a nice life!");
         public static NativeListItem<String> strikeMode = new NativeListItem<string>("Mode", "", "Gatling gun", "Missile barrage" , "Drone swarm");
@@ -72,6 +76,8 @@ namespace Airstrike
         public static NativeSliderItem radSlide = new NativeSliderItem("Gatling gun radius");
         public static NativeSliderItem rad2Slide = new NativeSliderItem("Missiles radius");
         public static NativeCheckboxItem blipsCheck = new NativeCheckboxItem("Plane blips");
+        public static NativeCheckboxItem hudCheck = new NativeCheckboxItem("Hide HUD", "Hides hud while in jet camera");
+
         void clearMem()
         {
             List<Ped> musor = new List<Ped>(World.GetAllPeds(PedHash.Blackops03SMY));
@@ -106,6 +112,9 @@ namespace Airstrike
         }
         void loadSettings()
         {
+            controller = Settings.GetValue<bool>("GAMEPAD", "enabled", false);
+            shw = Settings.GetValue<int>("GAMEPAD", "gamePadShowMenu", 56);
+            conCam = Settings.GetValue<int>("GAMEPAD", "gamePadJetCam", 57);
             resp = Settings.GetValue<bool>("FORSCRIPTTOREAD", "responsibility", true);
             respons.Checked = resp;
             int currentMode = Settings.GetValue<int>("FORSCRIPTTOREAD", "currentMode", 1);
@@ -145,6 +154,8 @@ namespace Airstrike
             model1 = Settings.GetValue<String>("SETTINGS", "bomberModel", "volatol");
             camKey = Settings.GetValue<Keys>("SETTINGS", "camKey", Keys.R);
             showMenuKey = Settings.GetValue<Keys>("SETTINGS", "showMenuKey", Keys.Delete);
+            hideHud = Settings.GetValue<bool>("FORSCRIPTTOREAD", "hideHud", true);
+            hudCheck.Checked = hideHud;
 
         }
         public Main()
@@ -190,18 +201,17 @@ namespace Airstrike
             subMenu.Add(radAud);
             subMenu.Add(respons);
             subMenu.Add(blipsCheck);
+            subMenu.Add(hudCheck);
             subMenu.Add(radSlide);
             subMenu.Add(rad2Slide);
             subMenu.Add(heightSlide);
             subMenu.Add(credit);
             
-
             menu.Banner.Color = Color.Transparent;
             menu.TitleFont = GTA.UI.Font.Monospace;
             menu.SubtitleFont = GTA.UI.Font.ChaletComprimeCologne;
             subMenu.Banner.Color = Color.Transparent;
             subMenu.TitleFont = GTA.UI.Font.Monospace;
-
             Tick += onTick;
             poolLoaded = true;
          
@@ -280,10 +290,7 @@ namespace Airstrike
                         if (false) { GTA.UI.Screen.ShowHelpText("Timepass: " + timePass, 2000, false, false); }
                         newTime = Game.GameTime;
                         timePass = newTime - delayTime;
-
-
                         OutputArgument projectPos = new OutputArgument();
-
                         if (Function.Call<bool>(Hash.GET_COORDS_OF_PROJECTILE_TYPE_WITHIN_DISTANCE, Game.Player.Character, WeaponHash.Flare, 500f, projectPos, true) && (timePass > timeOut || newTime < timeOut))
                         {
                             target = projectPos.GetResult<Vector3>();
@@ -370,7 +377,6 @@ namespace Airstrike
                                 {
                                     GTA.UI.Screen.ShowHelpText("~r~Invalid ~s~model name. Please make sure the plane model specified in the .ini file is ~g~correct~s~, and ~y~restart~s~ the script", 1500, true, false);
                                     unCallPlane(true);
-                                    
                                 }
                                 Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                                 plane.DirtLevel = 1000f;
@@ -391,7 +397,6 @@ namespace Airstrike
                                 plane.IsInvincible = true;
                                 Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X, target.Y, target.Z, 4, 200f, 0f, hed, (target.Z + height) / 6.25f, (target.Z + height) / 6.25f);
                                 jets.Add(plane);
-
                             }
                             else
                             if (i == 2)
@@ -420,9 +425,8 @@ namespace Airstrike
                                 }
                                 pilot.RelationshipGroup = player.RelationshipGroup;
                                 plane.IsInvincible = true;
-                                Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X, target.Y, target.Z, 4, 200f, 0f, hed, height / 6.25f, height / 6.25f);
+                                Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X, target.Y, target.Z, 4, 200f, 0f, hed, (target.Z + height) / 6.25f, (target.Z + height) / 6.25f);
                                 jets.Add(plane);
-
                             }
                             isDone = false;
                             timer = 0;
@@ -510,7 +514,6 @@ namespace Airstrike
                             }
                             isDone = false;
                             timer = 0;
-
                         }
                         break;
                     case 3:
@@ -695,8 +698,6 @@ namespace Airstrike
                                             if (false) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED: " + i, 1000, false, false); }
                                             i--;
                                         }
-                                       
-
                                     }
                                     i = 1;
                                     Wait(600);
@@ -718,7 +719,6 @@ namespace Airstrike
                                                 jetFire.ForwardSpeed = spd;
                                             }
                                         }
-                                       
                                     }
                                     break;
                                 case 2:
@@ -735,7 +735,6 @@ namespace Airstrike
                                             if (false) { GTA.UI.Screen.ShowHelpText("~r~SHOTS FIRED1: " + i, 1000, false, false); }
                                             i--;
                                         }
-                                       
                                     }
                                     i = 1;
                                     Wait(550);
@@ -757,11 +756,9 @@ namespace Airstrike
                                                 jetFire.ForwardSpeed = spd;
                                             }
                                         }
-                                       
                                     }
                                     break;
                                 case 3:
-                                   
                                     while (i <= 15 && !jet.IsDead && !isDone)
                                     {
                                             jet.ForwardSpeed = spd;
@@ -785,8 +782,6 @@ namespace Airstrike
                                                     v.EngineHealth = -4000f;
                                                     v.IsDriveable = true;
                                                     v.IsConsideredDestroyed = false;
-                                                  
-
                                                     if (v.IsHelicopter)
                                                     {
                                                         Function.Call(Hash.SET_VEHICLE_ENGINE_ON, v, false, true, true);
@@ -815,7 +810,6 @@ namespace Airstrike
                                                 isDone = true;
                                                 jet.ForwardSpeed = spd;
                                             }
-                                        
                                     }
                                     break;
                             }
@@ -824,7 +818,6 @@ namespace Airstrike
                         {
                             timer++;
                             if (debug) { GTA.UI.Screen.ShowHelpText("Emergency despawn timer: " + timer, 2000, false, false); }
-
                         }
                     }
                 }
@@ -910,7 +903,6 @@ namespace Airstrike
             RaycastResult ray = World.Raycast(camPos, camPos + camStuff * 1000, IntersectFlags.Everything);
             Vector3 trg = ray.HitPosition;
             return trg;
-
         }
         public static Vector3 RotationToDirection(Vector3 Rotation)
         {
