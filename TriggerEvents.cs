@@ -9,6 +9,7 @@ using Airstrike;
 using GTA;
 using GTA.Native;
 using GTA.UI;
+using LemonUI.Elements;
 using LemonUI.Menus;
 
 namespace PrecisionAirstrike
@@ -170,21 +171,21 @@ namespace PrecisionAirstrike
                 Settings.SetValue("FORSCRIPTTOREAD", "currentMode", 1);
                 Settings.Save();
                 Main.mode = 1;
-                Main.strikeMode.Description = "~y~2~s~ jets with gatling guns, delivering a burst of ~r~180~s~ rounds each. Precise and deadly.";
+                Main.strikeMode.Description = "2 jets with 30mm gatling cannons, delivering a burst of ~r~280~s~ rounds each. Precise and deadly.";
             }
             else if (Main.strikeMode.SelectedIndex == 1)
             {
                 Settings.SetValue("FORSCRIPTTOREAD", "currentMode", 2);
                 Settings.Save();
                 Main.mode = 2;
-                Main.strikeMode.Description = "~y~2~s~ stealth jets with ~r~45~s~ medium sized missiles each. Good against groups of vehicles.";
+                Main.strikeMode.Description = "A stealth bomber that releases a line of explosives along its path. Good for cleaning whole streets.";
             }
             else if (Main.strikeMode.SelectedIndex == 2)
             {
                 Settings.SetValue("FORSCRIPTTOREAD", "currentMode", 3);
                 Settings.Save();
                 Main.mode = 3;
-                Main.strikeMode.Description = "~y~20~s~ drones, each carrying ~r~15~s~ small missiles and an EMP generator. When the swarm gets close to the target it starts raining down missiles, and then generates an ~b~electro magnetic pulse~s~, disabling all vehicles in area, including aircraft. Good against helis.";
+                Main.strikeMode.Description = "20 drones, each carrying ~r~15~s~ small missiles and an EMP generator. When the swarm gets close to the target it starts raining down missiles, and then generates an electro magnetic pulse, disabling all vehicles in area, including aircraft. Good against helis.";
             }
         }
        
