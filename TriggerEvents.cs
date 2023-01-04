@@ -30,7 +30,30 @@ namespace PrecisionAirstrike
             Main.rad2Slide.ValueChanged += rad2Change;
             Main.blipsCheck.CheckboxChanged += pBlipsChange;
             Main.hudCheck.CheckboxChanged += hudChange;
+            Main.empList.ItemChanged += empChange;
         }
+        void empChange(object sender, ItemChangedEventArgs <String> e)
+        {
+            if (Main.empList.SelectedIndex == 0)
+            {
+                Settings.SetValue("FORSCRIPTTOREAD", "EMPMODE", 0);
+                Settings.Save();
+                Main.empMode = 0;
+            }
+            else if (Main.empList.SelectedIndex == 1)
+            {
+                Settings.SetValue("FORSCRIPTTOREAD", "EMPMODE", 1);
+                Settings.Save();
+                Main.empMode = 1;
+            }
+            else if (Main.empList.SelectedIndex == 2)
+            {
+                Settings.SetValue("FORSCRIPTTOREAD", "EMPMODE", 2);
+                Settings.Save();
+                Main.empMode = 2;
+            }
+        }
+
         void hudChange(object sender, EventArgs e)
         {
             if (Main.hudCheck.Checked)

@@ -21,30 +21,7 @@ namespace PrecisionAirstrike
         }
         void onTick(object sender, EventArgs e)
         {
-            if (Main.bombsActive)
-            {
-                foreach(Prop bomb in Main.bombs)
-                {
-                    Vector3 vel = new Vector3(bomb.Velocity.X, bomb.Velocity.Y, bomb.Velocity.Z - 0.5f);
-                    bomb.Velocity = vel;
-                    if (bomb.HasCollided)
-                    {
-                        World.AddExplosion(bomb.Position, ExplosionType.HunterBarrage, 5.0f, 1.0f, Main.owner, true, false);
-                        bomb.Delete();
-                    }
-                    if(Main.bombs.Count <= 0)
-                    {
-                        Main.bombs.Clear();
-                        Main.bombsActive = false;
-                        List<Prop> musor4 = new List<Prop>(World.GetAllProps("prop_ld_bomb_01_open"));
-                        foreach (Prop p in musor4)
-                        {
-                            p.Delete();
-                        }
-                        musor4.Clear();
-                    }
-                }
-            }
+           
             if (Main.controller)
             {
                 if (Function.Call<bool>(Hash.IS_CONTROL_JUST_PRESSED, 0, Main.shw) && Main.menu.Visible == false && Main.subMenu.Visible == false)

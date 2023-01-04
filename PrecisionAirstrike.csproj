@@ -81,6 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BombTick.cs" />
     <Compile Include="VariousTickEvents.cs" />
     <Compile Include="TriggerEvents.cs" />
     <Compile Include="Main.cs" />
