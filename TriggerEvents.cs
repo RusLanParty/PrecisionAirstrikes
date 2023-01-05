@@ -103,7 +103,7 @@ namespace PrecisionAirstrike
            
             Settings.SetValue("FORSCRIPTTOREAD", "height", Main.heightSlide.Value + 150);
             Settings.Save();
-            Main.height = Main.heightSlide.Value;
+            Main.height = Main.heightSlide.Value + 150;
             Main.heightSlide.Description = "The height at which planes will spawn: ~y~" +(Main.heightSlide.Value + 150).ToString();
         }
         void radAudChange(object sender, EventArgs e)
@@ -208,7 +208,7 @@ namespace PrecisionAirstrike
                 Settings.SetValue("FORSCRIPTTOREAD", "currentMode", 3);
                 Settings.Save();
                 Main.mode = 3;
-                Main.strikeMode.Description = "20 drones, each carrying ~r~15~s~ small missiles and an EMP generator. When the swarm gets close to the target it starts raining down missiles, and then generates an electro magnetic pulse, disabling all vehicles in area, including aircraft. Good against helis.";
+                Main.strikeMode.Description = "20 drones, each carrying ~r~15~s~ small missiles and an EMP generator. When the swarm gets close to the target it generates an electro magnetic pulse, disabling all vehicles & aircraft in area, and then launches a barrage of missiles at the target. Good against helis.";
             }
         }
        
