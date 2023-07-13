@@ -1,79 +1,168 @@
-Iconic killstreak from MW now in V!
+<p>Take control and unleash devastating aerial assaults by marking your targets with precision using flares or IR marking spotlights.</p>
 
-Features:
-<li>Use a flare to mark your target
-<li>Two jets will spawn and BRRRTTT marked target
-<li>Sound from Insurgency Sandstorm and youtube videos, remixed and tweaked by me
-<li>Radio chatter from [PROTOTYPE], cut by me (few variations, to not get boring too quickly)
-<li>Toggle jet camera by pressing NumPad5 (configurable via .ini)
-<li>Addon planes supported (just change "lazer" to the spawn name of your added plane in the .ini)
-<li>Configurable via .ini
+<p>Features:</p>
+<ul>
+  <li>Convenient menu access with the DELETE key (configurable via .ini file)</li>
+  <li>Choose your preferred targeting mode from the menu: flares or IR marking spotlights (left mouse click)</li>
+  <li>Once marked, air support will arrive to attack the designated target</li>
+  <li>Enjoy three strike types:
+    <ol>
+      <li>Two jets equipped with powerful 30mm GAU-8 cannons, delivering precise and lethal bursts of 280 rounds each.</li>
+      <li>A stealth bomber that releases a line of explosives, perfect for clearing entire streets.</li>
+      <li>Twenty drones, armed with 15 small missiles each and an EMP generator. The drones rain down missiles upon the target and then generate an electromagnetic pulse, disabling all vehicles, including aircraft, in the area. Ideal for countering helicopters.</li>
+    </ol>
+  </li>
+  <li>Immersive sounds sourced from Insurgency Sandstorm, DCS, MW2, and remixed by me (with an option to add your own sounds)</li>
+  <li>Engage the jet camera by pressing R (configurable via .ini file)</li>
+  <li>Addon planes are fully supported for a personalized experience</li>
+</ul>
+<p>Unleash devastating airstrikes and experience the thrill of commanding aerial firepower in GTA V with Precision Airstrikes. Take control, mark your targets, and watch as chaos unfolds from the skies. Share your custom sounds in the comments to contribute to the mod's growing archive. Get ready to dominate the skies and leave a trail of destruction in your wake.</p>
 
-I recommend to use it with the <a href=https://www.gta5-mods.com/vehicles/a-10-warthog-thunderbolt-usa-airforce-addon-fivem>A10</a>, to be true to the original.
-Install it, and change model from "lazer" to "warthog" in the .ini file that comes with the script. Of course you can use any other plane you'd like.
 
 Changelog:
 <li>1.0
 
 <li>1.1
-<br>-Fixed memory leak
-<br>-Added radio chatter audio
-<br>-Addon planes support
-<br>-Ability to toggle jet audio via .ini
-<br>-Ability to toggle chatter audio via .ini
+-Fixed memory leak
+-Added radio chatter audio
+-Addon planes support
+-Ability to toggle jet audio via .ini
+-Ability to toggle chatter audio via .ini
 
 <li>1.2
-<br>-Fixed addon planes not despawning in some cases where they blow up/crash etc
-<br>-Fixed audio staying in memory in those same cases
+-Fixed addon planes not despawning in some cases where they blow up/crash etc
+-Fixed audio staying in memory in those same cases
 
 <li>1.3
-<br>-Fixed only one jet shooting (strike is more precise now, no pun indented)
-<br>-Fixed jet spawns, no more explosions on spawn
-<br>-Fixed jet flight path, they fly more in sync now and avoid crashes
-<br>-Jets stay for longer
-<br>-Audio reworked, better sound and perfectly in sync
-<br>-Added jet camera, press NumPad5 to toggle (key configurable via .ini)
-<br>-The strike itself is more realistic now (watched some videos and tweaked rate of fire etc)
+-Fixed only one jet shooting (strike is more precise now, no pun intended)
+-Fixed jet spawns, no more explosions on spawn
+-Fixed jet flight path, they fly more in sync now and avoid crashes better
+-Jets stay for longer
+-Audio reworked, better sound and perfectly in sync
+-Added jet camera, press R to toggle (key configurable via .ini)
+-Rate of fire tweaked
 
 <li>1.3.1
-<br>-Remixed the sound, more bass and cleaned some noise
-<br>-Added bassy distant jet sound, sound doesn't cut off abruptly
-<br>-Added ability to tweak jet spawn height. Beware - lower looks cooler but the chances the jets will crash are higher (don't worry though, they will respawn for another round a short time after)
+-Remixed the sound, more bass and cleaned some noise
+-Added bassy distant jet sound, sound doesn't cut off as abruptly
+-Added ability to tweak jet spawn height
 
 <li>1.3.2
-<br>-Fixed planes disappearing too early in some cases
+-Fixed planes disappearing too early in some cases
 
 <li>1.4
-<br>-Fixed camera toggle responsiveness
-<br>-Fixed planes exploding on spawn
-<br>-Fixed planes not firing at the target (the only case they won't fire is when the flare stopped smoking, since the pilots can't see the target anymore they RTB)
-<br>-Fixed planes exploding from their own shots
-<br>-Fixed planes crashing into things
-<br>-Pilots use brakes and other surfaces (make turns), flight feels more natural
-<br>-Planes have turbulence now
-<br>-Planes now spawn smarter, and always head in the correct direction
-<br>-Fixed gear retracting/detracting mid flight
-<br>-Planes now use the height of the target as an offset (if you throw a flare on the top of Chiliad, the planes will spawn at the height of the mountain plus the height you specified in the ini)
-<br>-The strike covers larger area now, the coverage area moves forward with the plane
-<br>-Added ability to tweak the radius of the strike via ini (if radius set to zero, the shots will draw a straight line)
-<br>-Added ability to toggle blips via ini
+-Fixed camera toggle responsiveness
+-Fixed planes exploding on spawn (again)
+-Fixed planes not firing at the target (the only case they won't fire is when the flare stopped smoking, since the pilots can't see the target anymore they RTB)
+-Fixed planes exploding from their own shots
+-Fixed planes crashing into things
+-Pilots use brakes and other surfaces (make turns), flight feels more natural
+-Planes have turbulence now
+-Planes now spawn smarter, and always head in the correct direction
+-Fixed gear retracting/detracting mid flight
+-Planes now use the height of the target as an offset (if you throw a flare on the top of Mount Chiliad, the planes will spawn at the height of the mountain plus the height you specified in the ini)
+-The strike covers larger area now, the coverage area moves forward with the plane
+-Added ability to tweak the radius of the strike via ini (if radius set to zero, the shots will draw a straight line)
+-Added ability to toggle blips via ini
+
+<li>1.4.1
+-Planes change attitude to avoid obstacles
+-Camera improvements
+-Disabled debug text that I forgot
+
+<li>1.5
+-Fixes for strike not hitting the target
+-Some improvements to the strike itself
+-New strike mode
+-More configurable options in .ini
+
+<li>1.6
+-Menu implemented, not everything is configurable via menu for now
+-Strike improvements (a bit longer burst, faster fire rate, bigger coverage)
 
 <li>2.0
-<br>-New targeting mode - you can switch between flare and the IR Spotlight marker in the menu. Different strikes, different spotlight colors
-<br>-New airstrike, EMP drone swarm. Blast disables all vehicles including planes and helis, and causes a short power surge in the city. Here it is in action It is still WIP, feel free to post your ideas and suggestions
-<br>-Menu adjustments
-<br>-Added effects on radar when planes spawn/despawn
-<br>-Incase of incorrect model name in the ini you will see a warning message, instead of crashing
-<br>-All strikes slightly tweaked
-<br>-Script cleans memory on loading, disposes of the models if they exist. Feel free to restart midgame if needed, should be stable now
-<br>-Player receives flare/spotlight automatically when selecting targeting mode
-<br>-Added ability to change menu key
-<br>-Various bug fixes
+-New targeting mode - you can switch between flare and the IR Spotlight marker in the menu. Different strikes, different spotlight colors
+-New airstrike, EMP drone swarm. Blast disables all vehicles including planes and helis, and causes a short power surge in the city. <a href="https://youtu.be/CSU7i4wLFk0">Here it is in action</a> It is still WIP, feel free to post your ideas and suggestions
+-Menu adjustments
+-Added effects on radar when planes spawn/despawn
+-Incase of incorrect model name in the ini you will see a warning message, instead of crashing
+-All strikes slightly tweaked
+-Script cleans memory on loading, disposes of the models if they exist. Feel free to restart midgame if needed, should be stable now
+-Player receives flare/spotlight automatically when selecting targeting mode
+-Added ability to change menu key
+-Menu settings automatically saved
+-Minimap is hidden when jet camera is active
+-Various bug fixes
+
+<li>2.1
+-Improved drone swarm spawning
+-Drones now rain down rockets
+-EMP effect improved
+
+<li>2.2
+-Minor bug fixes
+
+<li>2.3
+-Fixed planes not shooting sometimes
+-Fixed menu flickering while accessing it mid strike
+-Added timeout counter in the menu
+-Menu cosmetic tweaks
+-Minor tweaks
+
+<li>2.3.1
+-Cars that were affected by the EMP can no longer be started
+-You can now use "fire" button on your gamepad, to call an airstrike by IR Spotlight (menu is still not compatible with gamepad)
+
+<li>2.3.2
+-Possible fix for menu not opening for some people
+
+<li>3.0
+-Rewrote menu, now supports gamepad (needs confirmation from people with gamepads)
+-Hopefully fixed menu not opening no matter what key is set in the .ini for some people
+-Menu redesigned, new options in the menu
+-Gatling gun strike is now much longer
+-Some people said they preferred the old gatling gun sound (from MW2), some said they like the new sound better (from Insurgency Sandstorm). I mixed them together
+-Drone swarm tweaks
+-Fixed only one jet visible on jet camera, FOV tweaked
+-Fixed planes with cartoonish colors
+-Various minor tweaks
+
+<li>3.1
+-Fixed gatling gun audio not playing when radio chatter set to off
+-Fixed planes not despawning when reloading script midstrike
+-Fixed camera not resetting while jets despawning when jet camera is active
+-Sound improved
+
+<li>3.2
+-Added ability to edit gamepad controls for gamepad users(need a confirmation that it works)
+-Added ability to disable automatic HUD hiding while in jet camera, for compatibility with "hud on phone up" trainer option
+
+<li>4.0
+-Red tracers for the 30mm cannons
+-All strike types reworked
+-Missile barrage replaced with carpet bombing
+-GAU-8 strike is much longer
+-Jets start shooting earlier, now they fly overhead AFTER finishing the strike, which looks much better
+-Audio tweaked to be more in sync
+-Settings check on startup, invalid values will be reset and a message will be displayed
+-Various tweaks and improvements
+
+<li>4.1
+-Stealth bomber rework (https://youtu.be/2fuzz25cxGs)
+-Added the ability to configure the EMP of the Drone Swarm. 3 modes available:
+1.Normal - All vehicle engines in range are disabled
+2.Aircraft only - EMP affects planes and helis only
+3.Disabled - No EMP, missiles only
+-Improved precision of all strikes
+-Fixed "height" displaying "0" at startup while set to 150
+-Various minor tweaks
 
 Requirements:
-<br><li>ASI Loader
-<br><li>Script Hook V
-<br><li>Community Script Hook V .NET 3.5.1
+<li>ASI Loader
+<li>Script Hook V
+<li>Community Script Hook V .NET 3.5.1
+<li>LemonUI (included)
+<li>NAudio (included)
 
 Installation:
 <li>Extract files in to the scripts folder
