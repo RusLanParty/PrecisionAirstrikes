@@ -22,18 +22,18 @@
 Changelog:
 <li>1.0
 
-<li>1.1
+<li>1.1<br>
 -Fixed memory leak<br>
 -Added radio chatter audio<br>
 -Addon planes support<br>
 -Ability to toggle jet audio via .ini<br>
 -Ability to toggle chatter audio via .ini<br>
 
-<li>1.2
+<li>1.2<br>
 -Fixed addon planes not despawning in some cases where they blow up/crash etc<br>
 -Fixed audio staying in memory in those same cases<br>
 
-<li>1.3
+<li>1.3<br>
 -Fixed only one jet shooting (strike is more precise now, no pun intended)<br>
 -Fixed jet spawns, no more explosions on spawn<br>
 -Fixed jet flight path, they fly more in sync now and avoid crashes better<br>
@@ -42,15 +42,15 @@ Changelog:
 -Added jet camera, press R to toggle (key configurable via .ini)<br>
 -Rate of fire tweaked<br>
 
-<li>1.3.1
+<li>1.3.1<br>
 -Remixed the sound, more bass and cleaned some noise<br>
 -Added bassy distant jet sound, sound doesn't cut off as abruptly<br>
 -Added ability to tweak jet spawn height<br>
 
-<li>1.3.2
+<li>1.3.2<br>
 -Fixed planes disappearing too early in some cases<br>
 
-<li>1.4
+<li>1.4<br>
 -Fixed camera toggle responsiveness<br>
 -Fixed planes exploding on spawn (again)<br>
 -Fixed planes not firing at the target (the only case they won't fire is when the flare stopped smoking, since the pilots can't see the target anymore they RTB)<br>
@@ -65,22 +65,22 @@ Changelog:
 -Added ability to tweak the radius of the strike via ini (if radius set to zero, the shots will draw a straight line)<br>
 -Added ability to toggle blips via ini<br>
 
-<li>1.4.1
+<li>1.4.1<br>
 -Planes change attitude to avoid obstacles<br>
 -Camera improvements<br>
 -Disabled debug text that I forgot<br>
 
-<li>1.5
+<li>1.5<br>
 -Fixes for strike not hitting the target<br>
 -Some improvements to the strike itself<br>
 -New strike mode<br>
 -More configurable options in .ini<br>
 
-<li>1.6
+<li>1.6<br>
 -Menu implemented, not everything is configurable via menu for now<br>
 -Strike improvements (a bit longer burst, faster fire rate, bigger coverage)<br>
 
-<li>2.0
+<li>2.0<br>
 -New targeting mode - you can switch between flare and the IR Spotlight marker in the menu. Different strikes, different spotlight colors<br>
 -New airstrike, EMP drone swarm. Blast disables all vehicles including planes and helis, and causes a short power surge in the city. <a href="https://youtu.be/CSU7i4wLFk0">Here it is in action</a> It is still WIP, feel free to post your ideas and suggestions<br>
 -Menu adjustments<br>
@@ -94,29 +94,29 @@ Changelog:
 -Minimap is hidden when jet camera is active<br>
 -Various bug fixes<br>
 
-<li>2.1
+<li>2.1<br>
 -Improved drone swarm spawning<br>
 -Drones now rain down rockets<br>
 -EMP effect improved<br>
 
-<li>2.2
+<li>2.2<br>
 -Minor bug fixes<br>
 
-<li>2.3
+<li>2.3<br>
 -Fixed planes not shooting sometimes<br>
 -Fixed menu flickering while accessing it mid strike<br>
 -Added timeout counter in the menu<br>
 -Menu cosmetic tweaks<br>
 -Minor tweaks<br>
 
-<li>2.3.1
+<li>2.3.1<br>
 -Cars that were affected by the EMP can no longer be started<br>
 -You can now use "fire" button on your gamepad, to call an airstrike by IR Spotlight (menu is still not compatible with gamepad)<br>
 
-<li>2.3.2
+<li>2.3.2<br>
 -Possible fix for menu not opening for some people<br>
 
-<li>3.0
+<li>3.0<br>
 -Rewrote menu, now supports gamepad (needs confirmation from people with gamepads)<br>
 -Hopefully fixed menu not opening no matter what key is set in the .ini for some people<br>
 -Menu redesigned, new options in the menu<br>
@@ -127,17 +127,17 @@ Changelog:
 -Fixed planes with cartoonish colors<br>
 -Various minor tweaks<br>
 
-<li>3.1
+<li>3.1<br>
 -Fixed gatling gun audio not playing when radio chatter set to off<br>
 -Fixed planes not despawning when reloading script midstrike<br>
 -Fixed camera not resetting while jets despawning when jet camera is active<br>
 -Sound improved<br>
 
-<li>3.2
+<li>3.2<br>
 -Added ability to edit gamepad controls for gamepad users(need a confirmation that it works)<br>
 -Added ability to disable automatic HUD hiding while in jet camera, for compatibility with "hud on phone up" trainer option<br>
 
-<li>4.0
+<li>4.0<br>
 -Red tracers for the 30mm cannons<br>
 -All strike types reworked<br>
 -Missile barrage replaced with carpet bombing<br>
@@ -147,7 +147,7 @@ Changelog:
 -Settings check on startup, invalid values will be reset and a message will be displayed<br>
 -Various tweaks and improvements<br>
 
-<li>4.1
+<li>4.1<br>
 -Stealth bomber rework (https://youtu.be/2fuzz25cxGs)<br>
 -Added the ability to configure the EMP of the Drone Swarm. 3 modes available:<br>
 1.Normal - All vehicle engines in range are disabled
