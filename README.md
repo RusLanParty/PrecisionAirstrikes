@@ -150,9 +150,9 @@ Changelog:
 <li>4.1<br>
 -Stealth bomber rework (https://youtu.be/2fuzz25cxGs)<br>
 -Added the ability to configure the EMP of the Drone Swarm. 3 modes available:<br>
-1.Normal - All vehicle engines in range are disabled
-2.Aircraft only - EMP affects planes and helis only
-3.Disabled - No EMP, missiles only
+1.Normal - All vehicle engines in range are disabled<br>
+2.Aircraft only - EMP affects planes and helis only<br>
+3.Disabled - No EMP, missiles only<br>
 -Improved precision of all strikes<br>
 -Fixed "height" displaying "0" at startup while set to 150<br>
 -Various minor tweaks<br>
