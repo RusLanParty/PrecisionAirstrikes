@@ -1,9 +1,0 @@
-D:\Visual Studio\Repos\Napalm\bin\Debug\Napalm.dll
-D:\Visual Studio\Repos\Napalm\bin\Debug\Napalm.pdb
-D:\Visual Studio\Repos\Napalm\bin\Debug\ScriptHookVDotNet3.dll
-D:\Visual Studio\Repos\Napalm\bin\Debug\ScriptHookVDotNet3.xml
-D:\Visual Studio\Repos\Napalm\obj\Debug\Napalm.csproj.AssemblyReference.cache
-D:\Visual Studio\Repos\Napalm\obj\Debug\Napalm.csproj.CoreCompileInputs.cache
-D:\Visual Studio\Repos\Napalm\obj\Debug\Napalm.csproj.CopyComplete
-D:\Visual Studio\Repos\Napalm\obj\Debug\Napalm.dll
-D:\Visual Studio\Repos\Napalm\obj\Debug\Napalm.pdb
