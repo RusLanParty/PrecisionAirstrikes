@@ -5,7 +5,7 @@
   <li>Convenient menu access with the DELETE key (configurable via .ini file)</li>
   <li>Choose your preferred targeting mode from the menu: flares or IR marking spotlights (left mouse click)</li>
   <li>Once marked, air support will arrive to attack the designated target</li>
-  <li>Enjoy three strike types:
+  <li>Three strike types:
     <ol>
       <li>Two jets equipped with powerful 30mm GAU-8 cannons, delivering precise and lethal bursts of 280 rounds each.</li>
       <li>A stealth bomber that releases a line of explosives, perfect for clearing entire streets.</li>
@@ -16,7 +16,6 @@
   <li>Engage the jet camera by pressing R (configurable via .ini file)</li>
   <li>Addon planes are fully supported for a personalized experience</li>
 </ul>
-<p>Unleash devastating airstrikes and experience the thrill of commanding aerial firepower in GTA V with Precision Airstrikes. Take control, mark your targets, and watch as chaos unfolds from the skies. Share your custom sounds in the comments to contribute to the mod's growing archive. Get ready to dominate the skies and leave a trail of destruction in your wake.</p>
 
 
 Changelog:
