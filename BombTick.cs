@@ -33,7 +33,7 @@ namespace PrecisionAirstrike
                         Main.bombs[i].IsVisible = false;
                     for (int j = 0; j <= 4; j++)
                         {
-                            World.ShootBullet(Main.bombs[i].Position.Around(1f), Main.bombs[i].Position + Game.Player.Character.UpVector * -5, Main.owner, WeaponHash.GrenadeLauncher, 100, 205);
+                            World.ShootBullet(Main.bombs[i].Position.Around(1f), Main.bombs[i].Position + Game.Player.Character.UpVector * -5, Main.owner, WeaponHash.CompactGrenadeLauncher, 100, 205);
                            // Wait(5);
                         }
                         Main.bombs.RemoveAt(i);

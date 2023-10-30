@@ -14,9 +14,9 @@ using LemonUI.Menus;
 
 namespace PrecisionAirstrike
 {
-    internal class TriggerEvents : Script
+    internal class Menu : Script
     {
-        public TriggerEvents()
+        public Menu()
         {
             KeyUp += onKeyUp;
             Main.strikeMode.ItemChanged += strikeChange;

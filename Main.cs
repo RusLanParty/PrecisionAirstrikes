@@ -85,12 +85,29 @@ namespace Airstrike
         public static NativeCheckboxItem blipsCheck = new NativeCheckboxItem("Plane blips");
         public static NativeCheckboxItem hudCheck = new NativeCheckboxItem("Hide HUD", "Hides hud while in jet camera");
         public static NativeListItem<String> empList = new NativeListItem<String>("EMP mode", "Normal - all vehicles in range disabled.", "Normal", "Aircraft only", "Disabled");
-       
-
+       /**
+        void onKeyUp(object sender, KeyEventArgs e)
+        {
+            Ped player = Game.Player.Character;
+            if (e.KeyCode == Keys.B)
+            {
+                GTA.UI.Screen.ShowHelpText("SPWN", 1000, true, false);
+                Vector3 pos = new Vector3(player.Position.X, player.Position.Y + 10f, player.Position.Z + 40f);
+                Vector3 pos1 = new Vector3(player.Position.X + 20f, player.Position.Y, player.Position.Z + 40f);
+                Vehicle heli = World.CreateVehicle("BUZZARD", pos, 0);
+                Ped pedik = World.CreatePed("a_m_m_soucent_03", pos1);
+                Ped pedik1 = World.CreatePed("a_m_m_soucent_04", pos1);
+                pedik.SetIntoVehicle(heli, VehicleSeat.Driver);
+                pedik1.SetIntoVehicle(heli, VehicleSeat.Passenger);
+                Function.Call(Hash.TASK_HELI_CHASE, pedik, player, 15f, 15f, 15f);
+                heli.AddBlip();
+                Function.Call(Hash.ADD_VEHICLE_SUBTASK_ATTACK_COORD, pedik, 0f, 0f, 0f);
+            }
+        }
+       */
         void clearMem()
         {
             List<Ped> musor = new List<Ped>(World.GetAllPeds(PedHash.Blackops03SMY));
-
             List<Vehicle> musor1 = new List<Vehicle>(World.GetAllVehicles(model));
             List<Vehicle> musor2 = new List<Vehicle>(World.GetAllVehicles(model1));
             List<Vehicle> musor3 = new List<Vehicle>(World.GetAllVehicles(VehicleHash.Starling));
@@ -251,6 +268,7 @@ namespace Airstrike
         {
             bool debug = false;
             Tick += onTick;
+            //KeyUp += onKeyUp;
             
          
             void onTick(object sender, EventArgs e)
@@ -285,10 +303,10 @@ namespace Airstrike
                     }
                     menu.Add(trgtmode);
                     menu.AddSubMenu(subMenu);
-                    menu.Title.Shadow = true;
-                    menu.Title.Outline = true;
-                    subMenu.Title.Shadow = true;
-                    subMenu.Title.Outline = true;
+                    menu.BannerText.Shadow = true;
+                    menu.BannerText.Outline = true;
+                    subMenu.BannerText.Shadow = true;
+                    subMenu.BannerText.Outline = true;
                     heightSlide.Multiplier = 50;
                     heightSlide.Maximum = 350;
                     heightSlide.Value = (int)height - 150;
@@ -323,10 +341,9 @@ namespace Airstrike
                     subMenu.Add(credit);
                     subMenu.Description = "~y~Custom jet models~s~, ~y~keybinds~s~, and ~y~timeout~s~ are only configurable via .ini";
                     menu.Banner.Color = Color.Transparent;
-                    menu.TitleFont = GTA.UI.Font.Monospace;
-                    menu.SubtitleFont = GTA.UI.Font.ChaletComprimeCologne;
+                    menu.BannerText.Font = GTA.UI.Font.Monospace;
                     subMenu.Banner.Color = Color.Transparent;
-                    subMenu.TitleFont = GTA.UI.Font.Monospace;
+                    subMenu.BannerText.Font = GTA.UI.Font.Monospace;
                     Game.Player.Character.Weapons.Give(WeaponHash.Widowmaker, 300, false, true);
                     init = true;
                     poolLoaded = true;
@@ -334,9 +351,9 @@ namespace Airstrike
                 Ped player = Game.Player.Character;
                 if (timeOut - timePass > 0 && newTime >= timeOut)
                 {
-                    menu.Subtitle = "Timeout: " + (timeOut - timePass);
+                    menu.Name = "Timeout: " + (timeOut - timePass);
                 }
-                else { menu.Subtitle = "Ready. Awaiting target input."; }
+                else { menu.Name = "Ready. Awaiting target input."; }
                 if (debug && jets.Count < 1) { GTA.UI.Screen.ShowSubtitle("isDone= " + isDone, 2000); }
                 else if(debug && jets.Count >= 1) { GTA.UI.Screen.ShowSubtitle("isDone= " + isDone + " Distance to target: " + jets[0].Position.DistanceTo(player.Position), 2000); }
                 if (modeLock)
@@ -890,9 +907,9 @@ namespace Airstrike
                                                                 }
                                                             }
                                                         }
-
                                                         World.AddExplosion(target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 10f)), ExplosionType.FireWork, 15f, 1f, null, true, false);
                                                         Wait(300);
+                                                        Function.Call(Hash.FORCE_LIGHTNING_FLASH);
                                                         World.Blackout = true;
                                                         Wait(300);
                                                         World.Blackout = false;
@@ -904,6 +921,7 @@ namespace Airstrike
                                                         World.Blackout = true;
                                                         Wait(896);
                                                         World.Blackout = false;
+                                                        Function.Call(Hash.FORCE_LIGHTNING_FLASH);
                                                         Wait(64);
                                                         World.Blackout = true;
                                                         Wait(1000);
@@ -933,6 +951,7 @@ namespace Airstrike
 
                                                         World.AddExplosion(target.Around(Function.Call<float>(Hash.GET_RANDOM_FLOAT_IN_RANGE, 0f, 10f)), ExplosionType.FireWork, 15f, 1f, null, true, false);
                                                         Wait(300);
+                                                        Function.Call(Hash.FORCE_LIGHTNING_FLASH);
                                                         World.Blackout = true;
                                                         Wait(300);
                                                         World.Blackout = false;
@@ -944,6 +963,7 @@ namespace Airstrike
                                                         World.Blackout = true;
                                                         Wait(896);
                                                         World.Blackout = false;
+                                                        Function.Call(Hash.FORCE_LIGHTNING_FLASH);
                                                         Wait(64);
                                                         World.Blackout = true;
                                                         Wait(1000);
