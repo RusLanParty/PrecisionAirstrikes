@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Airstrike;
-using GTA;
-using GTA.Native;
-using GTA.UI;
-using LemonUI.Elements;
+﻿using GTA;
 using LemonUI.Menus;
+using System;
+using System.Windows.Forms;
 
-namespace PrecisionAirstrike
+namespace PrecisionAirstrikes
 {
     internal class Menu : Script
     {
@@ -213,11 +204,11 @@ namespace PrecisionAirstrike
         }
        
         void onKeyUp(object sender, KeyEventArgs e)
-        {
+        {            
             if (!Main.controller)
             {
                 if (e.KeyCode == Main.showMenuKey && Main.menu.Visible == false && Main.subMenu.Visible == false)
-                {
+                {                    
                     Main.menu.Visible = true;
                 }
                 else if (e.KeyCode == Main.showMenuKey && Main.menu.Visible == true)

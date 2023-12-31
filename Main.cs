@@ -1,41 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Channels;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using GTA;
 using GTA.Math;
 using GTA.Native;
-using NAudio.Gui;
 using NAudio.Wave;
 using LemonUI;
 using LemonUI.Menus;
-using System.Threading;
 using System.Drawing;
-using GTA.UI;
-using LemonUI.Elements;
-using LemonUI.Scaleform;
 
-namespace Airstrike
+namespace PrecisionAirstrikes
 {
     public class Main : Script
     {
-        List<Vehicle> jets = new List <Vehicle>();
+        List<Vehicle> jets = new List<Vehicle>();
         public static List<Prop> bombs = new List<Prop>();
         bool planeActive = false;
         bool init = false;
-        public static bool bombsActive=false;
+        public static bool bombsActive = false;
         public static bool modeLock = false;
-        public static int aimMode=1;
-        public static int empMode=0;
+        public static int aimMode = 1;
+        public static int empMode = 0;
         bool isDone = false;
         Ped pilot;
         public static Ped owner;
         Blip blip;
-        float spd=185f;
+        float spd = 185f;
         public static Camera cam;
         public static bool cameraSet;
         public static bool cameraSet1;
@@ -44,13 +34,13 @@ namespace Airstrike
         int i;
         public static bool resp;
         public static int mode;
-        int j=0;
+        int j = 0;
         int delayTime = 0;
         int newTime;
         public static int timePass;
-        int timer=0;
+        int timer = 0;
         bool isMidStrike = false;
-        public static bool poolLoaded=false;
+        public static bool poolLoaded = false;
         public static float height;
         public static bool blipEnabled;
         public static bool jetAudio;
@@ -73,7 +63,7 @@ namespace Airstrike
         public static bool hideHud = false;
         public static NativeMenu menu = new NativeMenu("Precision Airstrikes");
         public static NativeItem credit = new NativeItem("Made by ~t~RusLanParty~s~ (Ruslan Libin)", "Hey, hope you're having a good time with my mod. I spent hours perfecting it, not without the help of random strangers like you who helped me trace issues and come up with creative ideas, so if you have any suggestions or bug reports feel free to contact me on ~g~GTA5MODS~s~. Say \"thank you\": ~p~patreon.com/RusLanParty");
-        public static NativeListItem<String> strikeMode = new NativeListItem<String>("Mode", "", "GAU-8 30mm", "Stealth Bomber" , "EMP Drone Swarm");
+        public static NativeListItem<String> strikeMode = new NativeListItem<String>("Mode", "", "GAU-8 30mm", "Stealth Bomber", "EMP Drone Swarm");
         public static NativeListItem<String> trgtmode = new NativeListItem<String>("Targeting mode", "Choose whether to use a ~y~flare~s~, or an ~y~IR spotlight~s~ to mark your target. \nYou can press Enter or scroll through the options to equip chosen marker.", "Flare", "IR Spotlight");
         public static NativeMenu subMenu = new NativeMenu("Options", "Options");
         public static NativeCheckboxItem jetAud = new NativeCheckboxItem("GAU-8 sound");
@@ -85,26 +75,26 @@ namespace Airstrike
         public static NativeCheckboxItem blipsCheck = new NativeCheckboxItem("Plane blips");
         public static NativeCheckboxItem hudCheck = new NativeCheckboxItem("Hide HUD", "Hides hud while in jet camera");
         public static NativeListItem<String> empList = new NativeListItem<String>("EMP mode", "Normal - all vehicles in range disabled.", "Normal", "Aircraft only", "Disabled");
-       /**
-        void onKeyUp(object sender, KeyEventArgs e)
-        {
-            Ped player = Game.Player.Character;
-            if (e.KeyCode == Keys.B)
-            {
-                GTA.UI.Screen.ShowHelpText("SPWN", 1000, true, false);
-                Vector3 pos = new Vector3(player.Position.X, player.Position.Y + 10f, player.Position.Z + 40f);
-                Vector3 pos1 = new Vector3(player.Position.X + 20f, player.Position.Y, player.Position.Z + 40f);
-                Vehicle heli = World.CreateVehicle("BUZZARD", pos, 0);
-                Ped pedik = World.CreatePed("a_m_m_soucent_03", pos1);
-                Ped pedik1 = World.CreatePed("a_m_m_soucent_04", pos1);
-                pedik.SetIntoVehicle(heli, VehicleSeat.Driver);
-                pedik1.SetIntoVehicle(heli, VehicleSeat.Passenger);
-                Function.Call(Hash.TASK_HELI_CHASE, pedik, player, 15f, 15f, 15f);
-                heli.AddBlip();
-                Function.Call(Hash.ADD_VEHICLE_SUBTASK_ATTACK_COORD, pedik, 0f, 0f, 0f);
-            }
-        }
-       */
+        /**
+         void onKeyUp(object sender, KeyEventArgs e)
+         {
+             Ped player = Game.Player.Character;
+             if (e.KeyCode == Keys.B)
+             {
+                 GTA.UI.Screen.ShowHelpText("SPWN", 1000, true, false);
+                 Vector3 pos = new Vector3(player.Position.X, player.Position.Y + 10f, player.Position.Z + 40f);
+                 Vector3 pos1 = new Vector3(player.Position.X + 20f, player.Position.Y, player.Position.Z + 40f);
+                 Vehicle heli = World.CreateVehicle("BUZZARD", pos, 0);
+                 Ped pedik = World.CreatePed("a_m_m_soucent_03", pos1);
+                 Ped pedik1 = World.CreatePed("a_m_m_soucent_04", pos1);
+                 pedik.SetIntoVehicle(heli, VehicleSeat.Driver);
+                 pedik1.SetIntoVehicle(heli, VehicleSeat.Passenger);
+                 Function.Call(Hash.TASK_HELI_CHASE, pedik, player, 15f, 15f, 15f);
+                 heli.AddBlip();
+                 Function.Call(Hash.ADD_VEHICLE_SUBTASK_ATTACK_COORD, pedik, 0f, 0f, 0f);
+             }
+         }
+        */
         void clearMem()
         {
             List<Ped> musor = new List<Ped>(World.GetAllPeds(PedHash.Blackops03SMY));
@@ -118,7 +108,7 @@ namespace Airstrike
             {
                 p.Delete();
             }
-            foreach(Vehicle p in musor1)
+            foreach (Vehicle p in musor1)
             {
                 p.Delete();
             }
@@ -126,15 +116,15 @@ namespace Airstrike
             {
                 p.Delete();
             }
-            foreach(Vehicle p in musor3)
+            foreach (Vehicle p in musor3)
             {
                 p.Delete();
             }
-            foreach(Prop p in musor4)
+            foreach (Prop p in musor4)
             {
-                p.Delete(); 
+                p.Delete();
             }
-            foreach(Prop p in musor5)
+            foreach (Prop p in musor5)
             {
                 p.Delete();
             }
@@ -145,7 +135,7 @@ namespace Airstrike
             musor4.Clear();
             musor5.Clear();
             System.GC.Collect();
-            if(World.RenderingCamera != null)
+            if (World.RenderingCamera != null)
             {
                 World.RenderingCamera = null;
                 World.DestroyAllCameras();
@@ -162,6 +152,8 @@ namespace Airstrike
                 Settings.SetValue("SETTINGS", "timeOut", 30000);
                 Settings.Save();
             }
+
+            /*
             model = Settings.GetValue<String>("SETTINGS", "JETMODEL", "lazer");
             Vehicle test = World.CreateVehicle(model, Game.Player.Character.Position + Game.Player.Character.UpVector * 20, 0f);
             if (test == null || test != null && !test.IsAircraft)
@@ -185,13 +177,15 @@ namespace Airstrike
             }
             else
             { test1.Delete(); }
+            */
             controller = Settings.GetValue<bool>("GAMEPAD", "enabled", false);
             shw = Settings.GetValue<int>("GAMEPAD", "gamePadShowMenu", 56);
             conCam = Settings.GetValue<int>("GAMEPAD", "gamePadJetCam", 57);
             resp = Settings.GetValue<bool>("FORSCRIPTTOREAD", "responsibility", true);
             respons.Checked = resp;
             int currentMode = Settings.GetValue<int>("FORSCRIPTTOREAD", "currentMode", 1);
-            mode = currentMode;
+            mode = currentMode;            
+
             if (currentMode == 1)
             {
                 strikeMode.SelectedItem = "GAU-8 30mm";
@@ -200,7 +194,7 @@ namespace Airstrike
             {
                 strikeMode.SelectedItem = "Stealth Bomber";
             }
-            else if(currentMode == 3)
+            else if (currentMode == 3)
             {
                 strikeMode.SelectedItem = "EMP Drone Swarm";
             }
@@ -209,7 +203,7 @@ namespace Airstrike
             radioAudio = Settings.GetValue<bool>("FORSCRIPTTOREAD", "radioAudio", true);
             radAud.Checked = radioAudio;
             aimMode = Settings.GetValue<int>("FORSCRIPTTOREAD", "targetingMode", 0);
-            if(aimMode != 1 && aimMode != 0)
+            if (aimMode != 1 && aimMode != 0)
             {
                 GTA.UI.Notification.Show("~r~PRECISION AIRSTRIKES:~s~ The ~y~aimMode~s~ value specified in the ini is ~r~incorrect~s~, and has been reset to default. Please use the menu to configure the mod.", true);
                 aimMode = 0;
@@ -235,7 +229,7 @@ namespace Airstrike
             blipEnabled = Settings.GetValue<bool>("FORSCRIPTTOREAD", "planeBlips", true);
             blipsCheck.Checked = blipEnabled;
             radius = Settings.GetValue<float>("FORSCRIPTTOREAD", "radius", 5);
-            if (radius > 20 || radius < 0) 
+            if (radius > 20 || radius < 0)
             {
                 GTA.UI.Notification.Show("~r~PRECISION AIRSTRIKES:~s~ The ~y~radius~s~ value specified in the ini is ~r~incorrect~s~, and has been reset to default. Please use the menu to configure the mod.", true);
                 radius = 5f;
@@ -251,7 +245,7 @@ namespace Airstrike
                 Settings.Save();
             }
             empMode = Settings.GetValue<int>("FORSCRIPTTOREAD", "EMPMODE", 0);
-           if(empMode != 0 && empMode != 1 && empMode != 2)
+            if (empMode != 0 && empMode != 1 && empMode != 2)
             {
                 GTA.UI.Notification.Show("~r~PRECISION AIRSTRIKES:~s~ The ~y~empMode~s~ value specified in the ini is ~r~incorrect~s~, and has been reset to default. Please use the menu to configure the mod.", true);
                 empMode = 0;
@@ -269,8 +263,8 @@ namespace Airstrike
             bool debug = false;
             Tick += onTick;
             //KeyUp += onKeyUp;
-            
-         
+
+
             void onTick(object sender, EventArgs e)
             {
                 if (Game.IsLoading)
@@ -355,7 +349,7 @@ namespace Airstrike
                 }
                 else { menu.Name = "Ready. Awaiting target input."; }
                 if (debug && jets.Count < 1) { GTA.UI.Screen.ShowSubtitle("isDone= " + isDone, 2000); }
-                else if(debug && jets.Count >= 1) { GTA.UI.Screen.ShowSubtitle("isDone= " + isDone + " Distance to target: " + jets[0].Position.DistanceTo(player.Position), 2000); }
+                else if (debug && jets.Count >= 1) { GTA.UI.Screen.ShowSubtitle("isDone= " + isDone + " Distance to target: " + jets[0].Position.DistanceTo(player.Position), 2000); }
                 if (modeLock)
                 {
                     strikeMode.Enabled = false;
@@ -384,8 +378,8 @@ namespace Airstrike
                     hudCheck.Enabled = true;
                     empList.Enabled = true;
                 }
-                
-                if(!planeActive || jets.Count == 0)
+
+                if (!planeActive || jets.Count == 0)
                 {
                     isDone = false;
                     timer = 0;
@@ -443,20 +437,20 @@ namespace Airstrike
                 }
                 else if (aimMode == 1 && timePass > timeOut || newTime < timeOut)
                 {
-                   
+
                     if (!isMidStrike)
                     {
-                        
+
                         if (player.Weapons.Current == WeaponHash.Flashlight && player.IsAiming)
                         {
-                           
+
                             target = rayCast();
                             if (mode == 1)
                             {
                                 World.DrawLightWithRange(target + player.UpVector, Color.Indigo, 10f, 10f);
                                 World.DrawLine(player.Weapons.CurrentWeaponObject.Position, target, Color.Indigo);
                             }
-                            else if(mode == 2)
+                            else if (mode == 2)
                             {
                                 World.DrawLightWithRange(target + player.UpVector, Color.DarkBlue, 10f, 10f);
                                 World.DrawLine(player.Weapons.CurrentWeaponObject.Position, target, Color.DarkBlue);
@@ -466,7 +460,7 @@ namespace Airstrike
                                 World.DrawLightWithRange(target + player.UpVector, Color.DarkGreen, 10f, 10f);
                                 World.DrawLine(player.Weapons.CurrentWeaponObject.Position, target, Color.DarkGreen);
                             }
-                            
+
                             if (Function.Call<bool>(Hash.IS_CONTROL_JUST_PRESSED, 0, 24) && !isMidStrike)
                             {
                                 Function.Call(Hash.SET_DISABLE_AMBIENT_MELEE_MOVE, player, true);
@@ -484,10 +478,10 @@ namespace Airstrike
                             }
                         }
                     }
-                   
+
                     if (isMidStrike && planeActive && jets.Count >= 1 && !isDone)
                     {
-                            strike(target, pilot, jets);
+                        strike(target, pilot, jets);
                     }
                 }
             }
@@ -503,7 +497,7 @@ namespace Airstrike
                     GTA.UI.Screen.ShowHelpText("Press " + "~y~" + "[" + camKey + "]" + "~s~" + " to toggle jet camera");
                     shown = true;
                 }
-                
+
                 switch (mode)
                 {
                     case 1:
@@ -570,42 +564,42 @@ namespace Airstrike
                         }
                         break;
                     case 2:
-                            if (debug) { GTA.UI.Screen.ShowHelpText("Jets are on the way...", 2000, false, false); }
-                           
-                                plane = World.CreateVehicle(model1, spwn, 0);
-                                Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
-                                plane.DirtLevel = 1000f;
-                                plane.Mods.PrimaryColor = VehicleColor.MetallicBlack;
-                                float hed1 = Function.Call<float>(Hash.GET_HEADING_FROM_VECTOR_2D, target.X - plane.Position.X, target.Y - plane.Position.Y);
-                                plane.Heading = hed1;
-                                pilot = plane.CreatePedOnSeat(VehicleSeat.Driver, PedHash.Blackops03SMY);
-                                plane.IsEngineRunning = true;
-                                plane.IsCollisionEnabled = false;
-                                plane.LandingGearState = VehicleLandingGearState.Retracted;
-                                plane.ForwardSpeed = spd;
-                                
-                                if (blipEnabled)
-                                {
-                                    blip = plane.AddBlip();
-                                    blip.Color = BlipColor.Purple;
-                                }
-                                pilot.RelationshipGroup = player.RelationshipGroup;
-                                plane.IsInvincible = true;
-                                Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X, target.Y, target.Z + height, 4, 0f, 0f, hed1, (target.Z + height) / 6.25f, (target.Z + height) / 6.25f);
-                                jets.Add(plane);
-                                isDone = false;
-                                timer = 0;
-                                Wait(50);
-                                if (radioAudio)
-                                {
-                                    j = 0;
-                                    spamBlock = false;
-                                    int rndFx = Function.Call<int>(Hash.GET_RANDOM_INT_IN_RANGE, 2, 5);
-                                    playSfx(rndFx);
-                                }
+                        if (debug) { GTA.UI.Screen.ShowHelpText("Jets are on the way...", 2000, false, false); }
+
+                        plane = World.CreateVehicle(model1, spwn, 0);
+                        Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
+                        plane.DirtLevel = 1000f;
+                        plane.Mods.PrimaryColor = VehicleColor.MetallicBlack;
+                        float hed1 = Function.Call<float>(Hash.GET_HEADING_FROM_VECTOR_2D, target.X - plane.Position.X, target.Y - plane.Position.Y);
+                        plane.Heading = hed1;
+                        pilot = plane.CreatePedOnSeat(VehicleSeat.Driver, PedHash.Blackops03SMY);
+                        plane.IsEngineRunning = true;
+                        plane.IsCollisionEnabled = false;
+                        plane.LandingGearState = VehicleLandingGearState.Retracted;
+                        plane.ForwardSpeed = spd;
+
+                        if (blipEnabled)
+                        {
+                            blip = plane.AddBlip();
+                            blip.Color = BlipColor.Purple;
+                        }
+                        pilot.RelationshipGroup = player.RelationshipGroup;
+                        plane.IsInvincible = true;
+                        Function.Call(Hash.TASK_PLANE_MISSION, pilot, plane, 0, 0, target.X, target.Y, target.Z + height, 4, 0f, 0f, hed1, (target.Z + height) / 6.25f, (target.Z + height) / 6.25f);
+                        jets.Add(plane);
+                        isDone = false;
+                        timer = 0;
+                        Wait(50);
+                        if (radioAudio)
+                        {
+                            j = 0;
+                            spamBlock = false;
+                            int rndFx = Function.Call<int>(Hash.GET_RANDOM_INT_IN_RANGE, 2, 5);
+                            playSfx(rndFx);
+                        }
                         break;
                     case 3:
-                       for(int i = 1; i <= 20; i++)
+                        for (int i = 1; i <= 20; i++)
                         {
                             Vector3 spwn3 = new Vector3(target.X - i * 10, target.Y - 3000f - i * 3, target.Z + height);
                             plane = World.CreateVehicle(VehicleHash.Starling, spwn3, 0);
@@ -641,20 +635,20 @@ namespace Airstrike
                         timer = 0;
                         break;
                 }
-               
+
                 planeActive = true;
                 cam = World.CreateCamera(jets[0].Position, jets[0].Rotation, 110f);
                 if (mode == 1)
                 {
-                    Function.Call(Hash._ATTACH_CAM_TO_PED_BONE_2, cam, jets[0].Driver, 31086, 0.0f, 90.0f, 28.0f, 0f, -15f, 3.57f, true);
+                    Function.Call(Hash.HARD_ATTACH_CAM_TO_PED_BONE, cam, jets[0].Driver, 31086, 0.0f, 90.0f, 28.0f, 0f, -15f, 3.57f, true);
                 }
                 else if (mode == 2)
                 {
-                    Function.Call(Hash._ATTACH_CAM_TO_PED_BONE_2, cam, jets[0].Driver, 31086, 0.0f, 90.0f, 0.0f, 0f, -35f, 3.57f, true);
+                    Function.Call(Hash.HARD_ATTACH_CAM_TO_PED_BONE, cam, jets[0].Driver, 31086, 0.0f, 90.0f, 0.0f, 0f, -35f, 3.57f, true);
                 }
                 else if (mode == 3)
                 {
-                    Function.Call(Hash._ATTACH_CAM_TO_PED_BONE_2, cam, jets[6].Driver, 31086, 0.0f, 90.0f, 0.0f, 0f, -8f, 0.3f, true);
+                    Function.Call(Hash.HARD_ATTACH_CAM_TO_PED_BONE, cam, jets[6].Driver, 31086, 0.0f, 90.0f, 0.0f, 0f, -8f, 0.3f, true);
                 }
 
                 cameraSet = true;
@@ -668,7 +662,7 @@ namespace Airstrike
                         foreach (Vehicle jet in jets)
                         {
                             jet.ForwardSpeed = spd;
-                            
+
                             if (debug) { GTA.UI.Screen.ShowHelpText("Jets despawned...", 2000, false, false); }
 
                             if (jet.Driver != null)
@@ -706,7 +700,7 @@ namespace Airstrike
                     }
                 }
 
-               else if (instant)
+                else if (instant)
                 {
                     foreach (Vehicle jet in jets)
                     {
@@ -726,7 +720,7 @@ namespace Airstrike
                     isMidStrike = false;
                     cameraSet = false;
                     modeLock = false;
-                    isDone=false;
+                    isDone = false;
                     timer = 0;
                     Function.Call(Hash.FLASH_MINIMAP_DISPLAY);
                     hudDis = false;
@@ -738,15 +732,15 @@ namespace Airstrike
                 Ped player = Game.Player.Character;
                 if (jets.Count >= 1)
                 {
-                    
-                    foreach(Vehicle jet in jets)
+
+                    foreach (Vehicle jet in jets)
                     {
                         Function.Call(Hash.SET_PLANE_TURBULENCE_MULTIPLIER, jet, 1.0f);
                         jet.ForwardSpeed = spd;
                         jet.Heading = Function.Call<float>(Hash.GET_HEADING_FROM_VECTOR_2D, target.X - jet.Position.X, target.Y - jet.Position.Y);
                         if (jet.Position.DistanceTo(target) > 3500f)
                         {
-                                isDone = true;
+                            isDone = true;
                             unCallPlane(true);
                         }
                         if ((jet.Position.DistanceTo(target) - jet.HeightAboveGround) < 600)
@@ -785,7 +779,7 @@ namespace Airstrike
                                     Wait(800);
                                     while (i <= 140 && !jet.IsDead && !isDone)
                                     {
-                                        foreach(Vehicle jetFire in jets)
+                                        foreach (Vehicle jetFire in jets)
                                         {
                                             jetFire.ForwardSpeed = spd;
                                             Vector3 offset = RotationToDirection(jetFire.Rotation);
@@ -804,9 +798,9 @@ namespace Airstrike
                                     }
                                     break;
                                 case 2:
-                                    if((jet.Position.DistanceTo(target) - jet.HeightAboveGround) < 25)
+                                    if ((jet.Position.DistanceTo(target) - jet.HeightAboveGround) < 25)
                                     {
-                                    i = 10;
+                                        i = 10;
                                         while (i >= 0 && !jet.IsDead && !isDone)
                                         {
                                             foreach (Vehicle jetFire in jets)
@@ -867,11 +861,11 @@ namespace Airstrike
                                             }
                                         }
                                     }
-                                   
+
                                     break;
                                 case 3:
                                     i = 0;
-                                    if(jet.Position.DistanceTo(target) < 600)
+                                    if (jet.Position.DistanceTo(target) < 600)
                                     {
                                         while (i <= 15 && !jet.IsDead && !isDone)
                                         {
@@ -979,7 +973,7 @@ namespace Airstrike
                                             }
                                         }
                                     }
-                                   
+
                                     break;
                             }
                         }
@@ -1058,7 +1052,7 @@ namespace Airstrike
                 // GTA.UI.Screen.ShowHelpText("Disposed wave", 1000, true, false);
             }
         }
-       
+
         Vector3 rayCast()
         {
             //get Aim Postion
@@ -1088,4 +1082,4 @@ namespace Airstrike
             };
         }
     }
-    }
+}
