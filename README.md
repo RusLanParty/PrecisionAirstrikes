@@ -169,6 +169,7 @@ Changelog:<br>
 -Fixed jets spawning but not shooting<br>
 -Fixed annoying error message on launch<br>
 -Added an electric flash on EMP blast<br>
+-Added the ability to use custom drone models for the EMP drone strike
 
 Requirements:
 <li>ASI Loader
