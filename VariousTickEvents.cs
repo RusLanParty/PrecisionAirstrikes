@@ -16,13 +16,13 @@ namespace PrecisionAirstrikes
            
             if (Main.controller)
             {
-                if (Function.Call<bool>(Hash.IS_CONTROL_JUST_PRESSED, 0, Main.shw) && Main.menu.Visible == false && Main.subMenu.Visible == false)
+                if (Function.Call<bool>(Hash.IS_CONTROL_JUST_PRESSED, 0, Main.shw) && Menu.menu.Visible == false && Menu.subMenu.Visible == false)
                 {
-                    Main.menu.Visible = true;
+                    Menu.menu.Visible = true;
                 }
-                else if (Function.Call<bool>(Hash.IS_CONTROL_JUST_PRESSED, 0, Main.shw) && Main.menu.Visible == true)
+                else if (Function.Call<bool>(Hash.IS_CONTROL_JUST_PRESSED, 0, Main.shw) && Menu.menu.Visible == true)
                 {
-                    Main.menu.Visible = false;
+                    Menu.menu.Visible = false;
                 }
 
                 if (Main.cameraSet && Function.Call<bool>(Hash.IS_CONTROL_JUST_PRESSED, 0, Main.conCam) && !Main.cameraSet1)
@@ -38,10 +38,7 @@ namespace PrecisionAirstrikes
                     Main.hudDis = false;
                 }
             }
-            if (Main.poolLoaded)
-            {
-                Main.pool.Process();
-            }
+           
 
             if (Main.hideHud)
             {
@@ -53,9 +50,7 @@ namespace PrecisionAirstrikes
                 {
                     Function.Call(Hash.DISPLAY_RADAR, true);
                 }
-            }
-           
-          
+            }                     
         }
     }
 }
