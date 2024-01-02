@@ -21,8 +21,8 @@
   <li>Addon planes are fully supported</li>
 </ul>
 
-Changelog:
-<li>1.0
+Changelog:<br>
+<li>1.0<br>
 
 <li>1.1
 -Fixed memory leak
